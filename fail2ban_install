@@ -30,7 +30,7 @@ sed -i "181i sender = $sender_email" $jail_local
 sed -i '263 s/action_/action_mw/' $jail_local
 sed -i '280d;281d;282d' $jail_local
 
-ins_text="enabled = true\nport = ssh\nlogpath = %(sshd_log)s\nbackend = systemd\nmaxretry = 3\nfindtime = 2d\nbantime = 24h\n\n[proxmox]\n\nenabled = true\nport = https,h>
+ins_text="enabled = true\nport = ssh\nlogpath = %(sshd_log)s\nbackend = systemd\nmaxretry = 3\nfindtime = 2d\nbantime = 24h\n\n[proxmox]\n\nenabled = true\nport = https,http,8006\nfilter = proxmox\nmaxretry = 3\nfindtime = 2d\nbantime = 24h\nbackend = systemd"
 sed -i "280i ${ins_text}" $jail_local
 
 #Creating and editing the proxmox filter.
