@@ -1,0 +1,51 @@
+#!/bin/bash
+
+if ! which fail2ban-client &> /dev/null
+    then
+        echo "fail2ban not found. Installing..."
+        apt update && apt install fail2ban -y
+        if which fail2ban-client &> /dev/null
+            then
+                echo "fail2ban has been successfully installed."
+            else
+                echo "Installation failed."
+    fi
+else
+    echo "fail2ban is already installed."
+fi
+
+jail_conf=/etc/fail2ban/jail.conf
+jail_local=/etc/fail2ban/jail.local
+
+#Copy the jail.conf into a .local, which is to be taken by fail2ban as the real config.
+cp $jail_conf $jail_local
+
+#Input from user on what sender email to use.
+echo "Enter an email for fail2ban to use as a \"sender\". (e.g. fail2ban@kittrelljensen.com)"
+read sender_email
+sed -i '181d' $jail_local
+sed -i "181i sender = $sender_email" $jail_local
+
+#Editing the .local file.
+sed -i '263 s/action_/action_mw/' $jail_local
+sed -i '280d;281d;282d' $jail_local
+
+ins_text="enabled = true\nport = ssh\nlogpath = %(sshd_log)s\nbackend = systemd\nmaxretry = 3\nfindtime = 2d\nbantime = 24h\n\n[proxmox]\n\nenabled = true\nport = https,h>
+sed -i "280i ${ins_text}" $jail_local
+
+#Creating and editing the proxmox filter.
+proxmox_filter=/etc/fail2ban/filter.d/proxmox.conf
+filter_def="[Definition]\nfailregex = pvedaemon\[.*authentication failure; rhost=<HOST> user=.* msg=.*\nignoreregex ="
+touch $proxmox_filter
+echo -e "$filterdef" > $proxmox_filter
+
+#This sets up fail2ban to not allow ipv6 connections. Mainly here to satisfy a pesky error.
+f2b_conf=/etc/fail2ban/fail2ban.conf
+f2b_local=/etc/fail2ban/fail2ban.local
+cp $f2b_conf $f2b_local
+sed -i '13i allowipv6 = no' $f2b_local
+
+#restart fail2ban to apply changes.
+systemctl restart fail2ban
+
+echo "Fail2ban has been successfully started"
