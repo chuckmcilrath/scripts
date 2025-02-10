@@ -46,7 +46,7 @@ filter = proxmox
 maxretry = 3
 findtime = 2d
 bantime = 24h
-backend = systemd"
+backend = systemd
 CONFIG
 )
 
