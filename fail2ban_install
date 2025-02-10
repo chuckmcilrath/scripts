@@ -29,7 +29,7 @@ sed -i "s/sender = root@<fq-hostname>/sender = $sender_email/" $jail_local
 sed -i 's/action = %(action_)s/action = %(action_mw)s/' $jail_local
 sed -i '280d;281d;282d' $jail_local
 
-ins_text=$( <<EOF
+ins_text=$(<<CONFIG
 enabled = true
 port = ssh
 logpath = %(sshd_log)s
@@ -47,9 +47,10 @@ maxretry = 3
 findtime = 2d
 bantime = 24h
 backend = systemd"
-EOF
+CONFIG
 )
-sed -i "280i ${ins_text}" $jail_local
+
+printf '%s\n' "$ins_text" | sed -i "280r /dev/stdin" "$jail_local"
 
 #Creating and editing the proxmox filter.
 proxmox_filter=/etc/fail2ban/filter.d/proxmox.conf
