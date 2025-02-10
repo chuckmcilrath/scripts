@@ -50,7 +50,7 @@ backend = systemd
 EOF
 )
 
-printf '%s\n' "$ins_text" | sed -i "280r /dev/stdin" "$jail_local"
+printf '%s\n' "$ins_text" | sed -i "/^\[sshd\]/r /dev/stdin" "$jail_local"
 
 #Creating and editing the proxmox filter.
 proxmox_filter=/etc/fail2ban/filter.d/proxmox.conf
