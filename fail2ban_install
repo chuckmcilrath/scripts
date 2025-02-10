@@ -21,7 +21,7 @@ jail_local=/etc/fail2ban/jail.local
 cp $jail_conf $jail_local
 
 #Input from user on what sender email to use.
-echo "Enter an email for fail2ban to use as a \"sender\". (e.g. fail2ban@kittrelljensen.com)"
+echo "Enter an email for fail2ban to use as a \"sender\". (e.g. fail2ban@name-of-company.com)"
 read sender_email
 sed -i "s/sender = root@<fq-hostname>/sender = $sender_email/" $jail_local
 
@@ -47,4 +47,4 @@ sed -i '13i allowipv6 = no' $f2b_local
 #restart fail2ban to apply changes.
 systemctl restart fail2ban
 
-echo "Fail2ban has been successfully started"
+echo -e "Fail2ban has been successfully started\nTo see status of the server, please type: \"systemctl status fail2ban\""
