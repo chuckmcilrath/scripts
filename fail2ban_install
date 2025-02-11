@@ -32,7 +32,7 @@ sed -i '280d;281d;282d' $jail_local
 #Input from user on how long to have the values below for.
 echo "Enter the maximum amount of retries before banning."
 read maxretry_input
-echo "Enter the amount of time to ban offenders? \"e.g. 12h, 50d, etc\"."
+echo "Enter the amount of time to ban offenders? (e.g. 5m, 12h, 50d, 10y etc)."
 read bantime_input
 
 ins_text=$(cat <<EOF
