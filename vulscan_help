@@ -26,8 +26,14 @@ lvremove /dev/pve/data -y \
 sed -i '/content/!b;/images/b;s/$/,images/' /etc/pve/storage.cfg
 sed -i '/^lvmthin: local-lvm/,+3 d' /etc/pve/storage.cfg
 
+#Install Fail2ban
+wget -O fail2ban_install https://raw.githubusercontent.com/chuckmcilrath/scripts/refs/heads/main/fail2ban_install \
+&& chmod +x fail2ban_install \
+&& apt update \
+&& ./fail2ban_install
+
 #Update and upgrade as well as add the USB storage and start a restore.
-apt update && apt upgrade -y && apt install ntfs-3g -y \
+apt upgrade -y && apt install ntfs-3g -y \
 && mkdir /mnt/usb-backup \
 && mount /dev/disk/by-id/usb-Seagate_One_Touch_Hub_00000000NAC92Y7J-0:0-part2 /mnt/usb-backup \
 && pvesm add dir USB-Backup --path /mnt/usb-backup --content backup,iso \
