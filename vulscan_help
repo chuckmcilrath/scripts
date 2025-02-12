@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#Changes the repositories.
+pve_ent=/etc/apt/sources.list.d/pve-enterprise.list
+pve_ceph=/etc/apt/sources.list.d/ceph.list
+pve_rep=/etc/apt/sources.list
+pve_nosub=$(cat <<EOF
+deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
+EOF
+)
+
+sed -i 's/^deb/\#deb/' "$pve_ent" "$pve_ceph"
+
+printf '%s\n' "$pve_nosub" >> "$pve_rep"
+
+echo "Please enter the from email you would like proxmox to use. (e.g. apex@vulscan.com)"
+read from_email
+
+sed -i "1a email_from: $from_email" /etc/pve/datacenter.cfg
+
+apt update && apt upgrade -y && apt install ntfs-3g
+#&& mkdir /mnt/usb-backup \
+#&& mount /dev/disk/by-id/usb-Seagate_One_Touch_Hub_00000000NAC92Y7J-0:0-part2 /mnt/usb-backup \
+#&& pvesm add dir USB-Backup --path /mnt/usb-backup --content backup,iso
