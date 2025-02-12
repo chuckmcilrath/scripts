@@ -31,5 +31,5 @@ apt update && apt upgrade -y && apt install ntfs-3g -y \
 && mkdir /mnt/usb-backup \
 && mount /dev/disk/by-id/usb-Seagate_One_Touch_Hub_00000000NAC92Y7J-0:0-part2 /mnt/usb-backup \
 && pvesm add dir USB-Backup --path /mnt/usb-backup --content backup,iso \
-&& qmrestore /mnt/usb-backup/dump/vzdump-qemu-104-2025_02_11-16_11_43.vma.zst 104
+&& qmrestore /mnt/usb-backup/dump/vzdump-qemu-104-2025_02_11-16_11_43.vma.zst 104 \
 && qmrestore /mnt/usb-backup/dump/vzdump-qemu-105-2025_02_11-16_15_39.vma.zst 105
