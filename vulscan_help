@@ -21,7 +21,7 @@ sed -i "1a email_from: $from_email" /etc/pve/datacenter.cfg
 #This will remove LVM storage and make Local have the ability to store Disk Images
 lvremove /dev/pve/data -y \
 && lvresize -l +100%FREE /dev/pve/root -y \
-&& resize2fs /dev/mapper/pve-root -y
+&& resize2fs /dev/mapper/pve-root
 
 sed -i '/content/!b;/images/b;s/$/,images/' /etc/pve/storage.cfg
 sed -i '/^lvmthin: local-lvm/,+3 d' /etc/pve/storage.cfg
