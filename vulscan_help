@@ -27,7 +27,7 @@ sed -i '/content/!b;/images/b;s/$/,images/' /etc/pve/storage.cfg
 sed -i '/^lvmthin: local-lvm/,+3 d' /etc/pve/storage.cfg
 
 #Install Fail2ban
-wget -O fail2ban_install https://raw.githubusercontent.com/chuckmcilrath/scripts/refs/heads/main/fail2ban_install \
+wget -O fail2ban_install https://raw.githubusercontent.com/chuckmcilrath/scripts/refs/heads/main/fail2ban_install%202.0 \
 && chmod +x fail2ban_install \
 && apt update \
 && ./fail2ban_install
