@@ -1,1 +1,61 @@
+#!/bin/bash
 
+if ! which fail2ban-client &> /dev/null
+    then
+        echo "fail2ban not found. Installing..."
+        apt update && apt install fail2ban -y
+        if which fail2ban-client &> /dev/null
+            then
+                echo "fail2ban has been successfully installed."
+            else
+                echo "Installation failed."
+                exit 1 #stop the script if installtion fails.
+    fi
+else
+    echo "fail2ban is already installed."
+fi
+
+jail_conf=/etc/fail2ban/jail.conf
+jail_local=/etc/fail2ban/jail.local
+
+#Copy the jail.conf into a .local, which is to be taken by fail2ban as the real config.
+cp $jail_conf $jail_local
+
+#Input from user.
+echo "Enter an email for fail2ban to use as a \"sender\". (e.g. fail2ban@name-of-company.com)"
+read sender_email
+echo "Enter the amount of time to ban offenders? (e.g. 5m, 12h, 50d, 10y etc)."
+read bantime_input
+echo "Enter the maximum amount of retries before banning."
+read maxretry_input
+
+
+#Editing the .local file.
+sed -i -e "s/sender = root@<fq-hostname>/sender = $sender_email/" \
+-e 's/^action = %(action_)s/action = %(action_mw)s/' \
+-e 's/backend = auto/backend = systemd' \
+-e 's/bantime  = 10m/bantime = $bantime_input/' \
+-e 's/maxretry = 5/maxretry = $maxretry_input' \
+-e '/\[sshd\]/a\enabled = true' "$jail.local"
+
+ echo -e "\n[proxmox]\nenabled = true \
+\nport = https,http,8006 \
+\nfilter = proxmox" >> "$jail.local"
+
+#Creating and editing the proxmox filter.
+proxmox_filter=/etc/fail2ban/filter.d/proxmox.conf
+filter_def="[Definition]\nfailregex = pvedaemon\[.*authentication failure; rhost=<HOST> user=.* msg=.*\nignoreregex ="
+touch $proxmox_filter
+echo -e "$filterdef" > $proxmox_filter
+
+#This sets up fail2ban to not allow ipv6 connections. Mainly here to satisfy a pesky error.
+f2b_conf=/etc/fail2ban/fail2ban.conf
+f2b_local=/etc/fail2ban/fail2ban.local
+cp $f2b_conf $f2b_local
+sed -i '/^\[DEFAULT\]/a\allowipv6 = no' $f2b_local
+
+#restart fail2ban to apply changes.
+systemctl restart fail2ban
+
+echo -e "Fail2ban has been successfully started\nTo see status of the server, please type: \"systemctl status fail2ban\""
+echo -e "USEFUL COMMANDS\nfail2ban-client status proxmox\nfail2ban-client unban ip (IP ADDRESS)"
