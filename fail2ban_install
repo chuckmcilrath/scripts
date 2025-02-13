@@ -26,8 +26,10 @@ read sender_email
 sed -i "s/sender = root@<fq-hostname>/sender = $sender_email/" $jail_local
 
 #Editing the .local file.
-sed -i 's/action = %(action_)s/action = %(action_mw)s/' $jail_local
-sed -i '280d;281d;282d' $jail_local
+sed -i 's/^action = %(action_)s/action = %(action_mw)s/' $jail_local
+sed -i '/\[sshd\]/ {n; n; n; n; n; n; d}' /etc/fail2ban/jail.local
+sed -i '/\[sshd\]/ {n; n; n; n; n; n; d}' /etc/fail2ban/jail.local
+sed -i '/\[sshd\]/ {n; n; n; n; n; n; d}' /etc/fail2ban/jail.local
 
 #Input from user on how long to have the values below for.
 echo "Enter the maximum amount of retries before banning."
