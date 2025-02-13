@@ -64,7 +64,7 @@ printf '%s\n' "$ins_text" | sed -i "/^\[sshd\]/r /dev/stdin" "$jail_local"
 proxmox_filter=/etc/fail2ban/filter.d/proxmox.conf
 filter_def="[Definition]\nfailregex = pvedaemon\[.*authentication failure; rhost=<HOST> user=.* msg=.*\nignoreregex ="
 touch $proxmox_filter
-echo -e "$filterdef" > $proxmox_filter
+echo -e "$filter_def" > $proxmox_filter
 
 #This sets up fail2ban to not allow ipv6 connections. Mainly here to satisfy a pesky error.
 f2b_conf=/etc/fail2ban/fail2ban.conf
