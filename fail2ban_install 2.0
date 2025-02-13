@@ -36,11 +36,11 @@ sed -i -e "s/sender = root@<fq-hostname>/sender = $sender_email/" \
 -e 's/backend = auto/backend = systemd/' \
 -e "s/bantime  = 10m/bantime = $bantime_input/" \
 -e "s/maxretry = 5/maxretry = $maxretry_input/" \
--e '/\[sshd\]/a\enabled = true/' "$jail.local"
+-e '/\[sshd\]/a\enabled = true/' "$jail_local"
 
  echo -e "\n[proxmox]\nenabled = true \
 \nport = https,http,8006 \
-\nfilter = proxmox" >> "$jail.local"
+\nfilter = proxmox" >> "$jail_local"
 
 #Creating and editing the proxmox filter.
 proxmox_filter=/etc/fail2ban/filter.d/proxmox.conf
