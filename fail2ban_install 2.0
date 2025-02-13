@@ -34,8 +34,8 @@ read maxretry_input
 sed -i -e "s/sender = root@<fq-hostname>/sender = $sender_email/" \
 -e 's/^action = %(action_)s/action = %(action_mw)s/' \
 -e 's/backend = auto/backend = systemd/' \
--e 's/bantime  = 10m/bantime = $bantime_input/' \
--e 's/maxretry = 5/maxretry = $maxretry_input/' \
+-e "s/bantime  = 10m/bantime = $bantime_input/" \
+-e "s/maxretry = 5/maxretry = $maxretry_input/" \
 -e '/\[sshd\]/a\enabled = true/' "$jail.local"
 
  echo -e "\n[proxmox]\nenabled = true \
