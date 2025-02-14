@@ -17,6 +17,7 @@ printf '%s\n' "$pve_nosub" >> "$pve_rep"
 sed -Ezi.bak "s/(function\(orig_cmd\) \{)/\1\n\torig_cmd\(\);\n\treturn;/g" \
 /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
 
+#Starts user input.
 echo "Please enter the from email you would like proxmox to use. (e.g. vulscan@COMPANYDOMAIN.com)"
 read from_email
 
