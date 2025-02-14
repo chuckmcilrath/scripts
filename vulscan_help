@@ -13,7 +13,11 @@ sed -i 's/^deb/\#deb/' "$pve_ent" "$pve_ceph"
 
 printf '%s\n' "$pve_nosub" >> "$pve_rep"
 
-echo "Please enter the from email you would like proxmox to use. (e.g. apex@vulscan.com)"
+#This command takes away the nagging subscription pop up. It makes a backup of the original file just in case.
+sed -Ezi.bak "s/(function\(orig_cmd\) \{)/\1\n\torig_cmd\(\);\n\treturn;/g" \
+/usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+
+echo "Please enter the from email you would like proxmox to use. (e.g. vulscan@COMPANYDOMAIN.com)"
 read from_email
 
 sed -i "1a email_from: $from_email" /etc/pve/datacenter.cfg
