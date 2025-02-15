@@ -4,10 +4,10 @@
 echo "Please enter the DOMAIN NAME of the company. (e.g. apexunderground.com) This will be used in the Proxmox from address and the fail2ban address."
 read domain_email
 
-echo "Enter the amount of time to ban offenders? (e.g. 5m, 12h, 50d, 10y etc)."
+echo "For fail2ban, enter the amount of time to ban offenders. (e.g. 5m, 12h, 50d, 10y etc)."
 read bantime_input
 
-echo "Enter the maximum amount of retries before banning."
+echo "For fail2ban, enter the maximum amount of retries before banning."
 read maxretry_input
 
 #Changes the repositories.
