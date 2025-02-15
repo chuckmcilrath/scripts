@@ -87,9 +87,6 @@ sed -i '/^\[DEFAULT\]/a\allowipv6 = no' $f2b_local
 #restart fail2ban to apply changes.
 systemctl restart fail2ban
 
-echo -e "Fail2ban has been successfully started\nTo see status of the server, please type: \"systemctl status fail2ban\""
-echo -e "USEFUL COMMANDS\nfail2ban-client status proxmox\nfail2ban-client unban ip (IP ADDRESS)"
-
 #Update and upgrade as well as add the USB storage and start a restore.
 apt upgrade -y && apt install ntfs-3g -y
 #&& mkdir /mnt/usb-backup \
@@ -97,3 +94,7 @@ apt upgrade -y && apt install ntfs-3g -y
 #&& pvesm add dir USB-Backup --path /mnt/usb-backup --content backup,iso \
 #&& qmrestore /mnt/usb-backup/dump/vzdump-qemu-104-2025_02_11-16_11_43.vma.zst 104 \
 #&& qmrestore /mnt/usb-backup/dump/vzdump-qemu-105-2025_02_11-16_15_39.vma.zst 105
+
+echo "Finished updating your proxmox install for Vulscan."
+echo -e "Fail2ban has been successfully started\nTo see status of the server, please type: \"systemctl status fail2ban\""
+echo -e "USEFUL COMMANDS\nfail2ban-client status proxmox\nfail2ban-client unban ip (IP ADDRESS)"
