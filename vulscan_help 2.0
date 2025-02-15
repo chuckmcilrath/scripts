@@ -60,7 +60,6 @@ read bantime_input
 echo "Enter the maximum amount of retries before banning."
 read maxretry_input
 
-
 #Editing the .local file.
 sed -i -e "s/sender = root@<fq-hostname>/sender = fail2ban@$domain_email/" \
        -e 's/^action = %(action_)s/action = %(action_mw)s/' \
