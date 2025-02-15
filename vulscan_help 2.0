@@ -18,12 +18,12 @@ sed -Ezi.bak "s/(function\(orig_cmd\) \{)/\1\n\torig_cmd\(\);\n\treturn;/g" \
 /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
 
 #Starts user input.
-  echo "Please enter the DOMAIN NAME of the company. (e.g. apexunderground.com) This will be used in the Proxmox from address and the fail2ban address."
+echo "Please enter the DOMAIN NAME of the company. (e.g. apexunderground.com) This will be used in the Proxmox from address and the fail2ban address."
 read domain_email
 
 sed -i "1a email_from: vulscan@$domain_email" /etc/pve/datacenter.cfg
 
-#This will remove LVM storage and make Local have the ability to store Disk Images
+#This will remove LVM storage and make Local have the ability to store disk images
 lvremove /dev/pve/data -y \
 && lvresize -l +100%FREE /dev/pve/root -y \
 && resize2fs /dev/mapper/pve-root
@@ -62,7 +62,7 @@ read maxretry_input
 
 
 #Editing the .local file.
-sed -i -e "s/sender = root@<fq-hostname>/sender = fail2ban@$sender_email/" \
+sed -i -e "s/sender = root@<fq-hostname>/sender = fail2ban@$domain_email/" \
        -e 's/^action = %(action_)s/action = %(action_mw)s/' \
        -e 's/backend = auto/backend = systemd/' \
        -e "s/bantime  = 10m/bantime = $bantime_input/" \
