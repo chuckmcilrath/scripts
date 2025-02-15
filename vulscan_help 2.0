@@ -67,7 +67,7 @@ sed -i -e "s/sender = root@<fq-hostname>/sender = fail2ban@$domain_email/" \
        -e 's/backend = auto/backend = systemd/' \
        -e "s/bantime  = 10m/bantime = $bantime_input/" \
        -e "s/maxretry = 5/maxretry = $maxretry_input/" \
-       -e '/^\[sshd\]/a\enabled = true/' "$jail_local"
+       -e '/^\[sshd\]/a\enabled = true' "$jail_local"
 
 echo -e "\n[proxmox]\nenabled = true \
 \nport = https,http,8006 \
