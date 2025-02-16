@@ -1,4 +1,23 @@
 #!/bin/bash
 
-#checks to see if systemd-resolved is installed or not. If not, installs.
-if 
+while true; do
+    # Input from user
+    echo -e "Choose the install type: \n\n1. Wireguard Server \n2. Wireguard Client\n"
+    read install_type
+
+    case "$install_type" in
+        1)
+            echo "Starting the installation of the Wireguard server..."
+            apt update &> /dev/null && apt upgrade -y &> /dev/null 
+            if ! dpkg -l | grep systemd-resolved &> /dev/null; then
+                echo "systemd-resolved not found. Installing systemd-resolved..."
+                apt install systemd-resolved -y &> /dev/null
+                if dpkg -l | grep systemd-resolved &> /dev/null; then
+                        echo "systemd-resolved has been successfully installed."
+                    else
+                        echo "Installation failed. Please clear the error and try again. Exiting Wireguard installation."
+                        exit 1
+                fi
+            else
+                echo "systemd-resolved is already installed. Continuing..."
+            fi
