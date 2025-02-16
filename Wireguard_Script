@@ -1,0 +1,4 @@
+#!/bin/bash
+
+#checks to see if systemd-resolved is installed or not. If not, installs.
+if 
