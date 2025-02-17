@@ -1,6 +1,7 @@
 #!/bin/bash
 
 #Starts user input for user variables.
+echo "Starting the helper script."
 echo "Please enter the DOMAIN NAME of the company. (e.g. apexunderground.com) This will be used in the Proxmox from address and the fail2ban address."
 read domain_email
 
