@@ -9,7 +9,7 @@ while true; do
 
     case "$install_type" in
         1)
-            echo "Starting the installation of the Wireguard server..."
+            echo "Starting the installation of the Wireguard server...\nChecking to see if systemd-resovled is installed..."
             apt update &> /dev/null && apt upgrade -y &> /dev/null 
             if ! dpkg -l | grep systemd-resolved &> /dev/null; then
                 echo "systemd-resolved not found. Installing systemd-resolved..."
@@ -54,6 +54,7 @@ while true; do
             done
 
             sed -i "s/#DNS=/DNS="$ip"/" $resolved_path
+            echo "The installation has been completed!"
             break # Exit the loop
             ;;
         *)
