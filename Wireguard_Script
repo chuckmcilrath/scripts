@@ -1,5 +1,7 @@
 #!/bin/bash
 
+resolved_path=/etc/systemd/resolved.conf
+
 while true; do
     # Input from user
     echo -e "Choose the install type: \n\n1. Wireguard Server \n2. Wireguard Client\n"
@@ -21,3 +23,41 @@ while true; do
             else
                 echo "systemd-resolved is already installed. Continuing..."
             fi
+            
+            # Function to check if the entered IP is valid
+            is_valid_ip() {
+                local ip=$1
+                local IFS='.'
+                local -a octets=($ip)
+
+                # Must have exactly 4 octets
+                [[ ${#octets[@]} -ne 4 ]] && return 1
+
+                # Check each octet is between 0 and 255
+                for octet in "${octets[@]}"; do
+                    [[ ! "$octet" =~ ^[0-9]+$ ]] && return 1  # Ensure it's numeric
+                    ((octet < 0 || octet > 255)) && return 1
+                done
+
+                return 0  # IP is valid
+            }
+
+            # Loop until valid input
+            while true; do
+                read -p "Enter a DNS for Resolved to use (input the gateway or firewall here): " ip
+                if is_valid_ip "$ip"; then
+                    echo "Valid IP address: $ip"
+                    break  # Exit loop if valid
+                else
+                    echo "Invalid IP! Please enter a correct IP address (0.0.0.0 - 255.255.255.255)."
+                fi
+            done
+
+            sed -i "s/#DNS=/DNS="$ip"/" $resolved_path
+            break # Exit the loop
+            ;;
+        *)
+            echo "Invalid Option."
+            ;;
+    esac
+done
