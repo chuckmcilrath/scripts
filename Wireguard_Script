@@ -30,7 +30,7 @@ while true; do
                 local IFS='.'
                 local -a octets=($ip)
 
-                # Must have exactly 4 octets
+                [[ "${octets[0]}" -eq 127 ]] && return 1
                 [[ ${#octets[@]} -ne 4 ]] && return 1
 
                 # Check each octet is between 0 and 255
