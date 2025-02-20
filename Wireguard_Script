@@ -47,6 +47,7 @@ while true; do
                 read -p "Enter a DNS for Resolved to use (input the gateway or firewall here): " ip
                 if is_valid_ip "$ip"; then
                     echo "Valid IP address: $ip"
+                    systemctl restart systemd-resolved.service
                     break  # Exit loop if valid
                 else
                     echo "Invalid IP! Please enter a correct IP address (0.0.0.0 - 255.255.255.255)."
