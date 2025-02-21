@@ -52,7 +52,7 @@ while true; do
                     systemctl restart systemd-resolved.service
                         if ping -q -c 1 -w 1 &> /dev/null "$ip"; then
                             echo "ping to "$ip" was successful. Continuing with Installation..."
-                            break #MIGHT NEED TO REMOVE!!!
+                            break
                         else
                             echo "ping was unsuccessful, please try again."
                         fi
@@ -78,7 +78,7 @@ while true; do
             #Install ssh
             if ! dpkg -l | grep openssh &> /dev/null; then
                 echo "Openssh not found. Installing openssh and it's dependencies..."
-                apt install openssh-client -y &> /dev/null \ 
+                apt install openssh-client -y &> /dev/null \
                 && apt install openssh-server -y &> /dev/null \
                 && apt install openssh-sftp-server -y &> /dev/null
                 if dpkg -l | grep ssh &> /dev/null; then
