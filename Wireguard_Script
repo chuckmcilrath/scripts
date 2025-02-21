@@ -4,8 +4,8 @@ resolved_path=/etc/systemd/resolved.conf
 
 while true; do
     # Input from user
-    echo -e "Choose the install type: \n\n1. Wireguard Server \n2. Wireguard Client\nType \"exit\" to exit the script."
-    read install_type
+    read -p $'\nChoose the install type:\n\n1. (OPTIONAL) Set Static IP\n2. Wireguard Server\nType "exit" to exit the script:' install_type
+    
 
     case "$install_type" in
         1)
@@ -50,7 +50,7 @@ while true; do
                     echo "Valid IP address: $ip"
                     sed -i "/^#\?DNS=/c\DNS=$ip" "$resolved_path"
                     systemctl restart systemd-resolved.service
-                        if ping -q -c 1 -w 1 &> /dev/null "$ip"; then
+                        if ping -q -c 1 -w 1 "$ip" &> /dev/null ; then
                             echo "ping to "$ip" was successful. Continuing with Installation..."
                             break
                         else
