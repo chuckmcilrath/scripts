@@ -9,8 +9,9 @@ while true; do
 
     case "$install_type" in
         1)
-            echo -e "Starting the installation of the Wireguard server...\nChecking to see if systemd-resovled is installed..."
-            apt update &> /dev/null && apt upgrade -y &> /dev/null 
+            echo -e "Starting the installation of the Wireguard server...\nStarting update and upgrade for this machine..."
+            apt update &> /dev/null && apt upgrade -y &> /dev/null
+            echo -e "apt update and apt upgrade have completed.\nLooking for systemd-resolved..."
             if ! dpkg -l | grep systemd-resolved &> /dev/null; then
                 echo "systemd-resolved not found. Installing systemd-resolved..."
                 apt install systemd-resolved -y &> /dev/null
@@ -23,8 +24,8 @@ while true; do
             else
                 echo "systemd-resolved is already installed. Continuing..."
             fi
-            
-            # Function to check if the entered IP is valid
+
+            # Function to check if the entered IP is valid for the systemd-resolved configuration.
             is_valid_ip() {
                 local ip=$1
                 local IFS='.'
@@ -35,7 +36,7 @@ while true; do
 
                 # Check each octet is between 0 and 255
                 for octet in "${octets[@]}"; do
-                    [[ ! "$octet" =~ ^[0-9]+$ ]] && return 1  # Ensure it's numeric
+                    [[ ! "$octet" =~ ^[0-9]+$ ]] && return 1
                     ((octet < 0 || octet > 255)) && return 1
                 done
 
@@ -51,7 +52,7 @@ while true; do
                     systemctl restart systemd-resolved.service
                         if ping -q -c 1 -w 1 &> /dev/null "$ip"; then
                             echo "ping to "$ip" was successful. Continuing with Installation..."
-                            break
+                            break #MIGHT NEED TO REMOVE!!!
                         else
                             echo "ping was unsuccessful, please try again."
                         fi
@@ -60,6 +61,33 @@ while true; do
                 fi
             done
 
+            #Install iptables
+            if ! dpkg -l | grep iptables &> /dev/null; then
+                echo "iptables not found. Installing iptables..."
+                apt install iptables -y &> /dev/null
+                if dpkg -l | grep iptables &> /dev/null; then
+                        echo "iptables has been successfully installed."
+                    else
+                        echo "Installation failed. Please clear the error and try again. Exiting Wireguard installation."
+                        exit 1
+                fi
+            else
+                echo "iptables is already installed. Continuing..."
+            fi
+
+            #Install ssh
+            if ! dpkg -l | grep ssh &> /dev/null; then
+                echo "SSH not found. Installing iptables..."
+                apt install ssh -y &> /dev/null
+                if dpkg -l | grep ssh &> /dev/null; then
+                        echo "ssh has been successfully installed."
+                    else
+                        echo "Installation failed. Please clear the error and try again. Exiting Wireguard installation."
+                        exit 1
+                fi
+            else
+                echo "ssh is already installed. Continuing..."
+            fi
             echo "The installation has been completed!"
             break # Exit the loop
             ;;
