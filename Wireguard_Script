@@ -4,7 +4,7 @@ resolved_path=/etc/systemd/resolved.conf
 
 while true; do
     # Input from user
-    echo -e "Choose the install type: \n\n1. Wireguard Server \n2. Wireguard Client\n"
+    echo -e "Choose the install type: \n\n1. Wireguard Server \n2. Wireguard Client\nType \"exit\" to exit the script."
     read install_type
 
     case "$install_type" in
@@ -76,17 +76,19 @@ while true; do
             fi
 
             #Install ssh
-            if ! dpkg -l | grep ssh &> /dev/null; then
-                echo "SSH not found. Installing iptables..."
-                apt install ssh -y &> /dev/null
+            if ! dpkg -l | grep openssh &> /dev/null; then
+                echo "Openssh not found. Installing openssh and it's dependencies..."
+                apt install openssh-client -y &> /dev/null \ 
+                && apt install openssh-server -y &> /dev/null \
+                && apt install openssh-sftp-server -y &> /dev/null
                 if dpkg -l | grep ssh &> /dev/null; then
-                        echo "ssh has been successfully installed."
+                        echo "openssh and it's dependencies has been successfully installed."
                     else
                         echo "Installation failed. Please clear the error and try again. Exiting Wireguard installation."
                         exit 1
                 fi
             else
-                echo "ssh is already installed. Continuing..."
+                echo "Openssh is already installed. Continuing..."
             fi
             echo "The installation has been completed!"
             break # Exit the loop
