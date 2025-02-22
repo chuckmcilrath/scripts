@@ -1,6 +1,25 @@
 #!/bin/bash
 
 resolved_path=/etc/systemd/resolved.conf
+net_int=/etc/network/interfaces
+
+# Function to check if the entered IP is valid for the systemd-resolved configuration.
+is_valid_ip() {
+    local ip=$1
+    local IFS='.'
+    local -a octets=($ip)
+
+        [[ "${octets[0]}" -eq 127 ]] && return 1
+        [[ ${#octets[@]} -ne 4 ]] && return 1
+
+        # Check each octet is between 0 and 255
+        for octet in "${octets[@]}"; do
+            [[ ! "$octet" =~ ^[0-9]+$ ]] && return 1
+            ((octet < 0 || octet > 255)) && return 1
+        done
+
+        return 0  # IP is valid
+    }
 
 while true; do
     # Input from user
@@ -8,7 +27,7 @@ while true; do
     
     case "$install_type" in
         1)
-            net_int=/etc/network/interfaces
+            
             echo -e "\n***WARNING***\nOnce you change the IP, you WILL be disconnected.\nYou will need to re-connect using the correct IP.\n"
 
             # checks to see if network is DHCP, then changes it to static and adds address and gateway.
@@ -69,23 +88,7 @@ while true; do
                 echo "systemd-resolved is already installed. Continuing..."
             fi
 
-            # Function to check if the entered IP is valid for the systemd-resolved configuration.
-            is_valid_ip() {
-                local ip=$1
-                local IFS='.'
-                local -a octets=($ip)
-
-                [[ "${octets[0]}" -eq 127 ]] && return 1
-                [[ ${#octets[@]} -ne 4 ]] && return 1
-
-                # Check each octet is between 0 and 255
-                for octet in "${octets[@]}"; do
-                    [[ ! "$octet" =~ ^[0-9]+$ ]] && return 1
-                    ((octet < 0 || octet > 255)) && return 1
-                done
-
-                return 0  # IP is valid
-            }
+            
 
             # Loop until valid input
             while true; do
