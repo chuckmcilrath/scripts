@@ -28,7 +28,6 @@ while true; do
     
     case "$install_type" in
         1)
-            
             echo -e "\n***WARNING***\nOnce you change the IP, you WILL be disconnected.\nYou will need to re-connect using the correct IP.\n"
 
             # checks to see if network is DHCP, then changes it to static and adds address and gateway.
