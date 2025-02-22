@@ -79,6 +79,7 @@ while true; do
             done
             echo -e "Network settings have been updated, and network has been refreshed.\nPlease connect using the new IP\nExiting script."
             systemctl restart networking
+            exit 1
             ;;
         2)
             echo -e "Starting the installation of the Wireguard server...\nStarting update and upgrade for this machine..."
