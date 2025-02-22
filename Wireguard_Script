@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Global Variables
 resolved_path=/etc/systemd/resolved.conf
 net_int=/etc/network/interfaces
 
