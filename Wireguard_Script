@@ -41,6 +41,7 @@ while true; do
                 read -p "Are you sure you want to use "$static_gw"? y/n: " static_gw_confirm
                 if [[ $static_gw_confirm = y ]]; then
                     sed -i "/gateway/c\        gateway "$static_gw" " $net_int
+                    break
                 elif [[ $static_gw_confirm = n ]]; then
                     echo "Please try again."
                 else
