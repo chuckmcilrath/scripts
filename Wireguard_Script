@@ -61,11 +61,11 @@ while true; do
 
             # Adds the CIDR notation to the end of the IP.
             while true; do
-                read -p "Whats the subnet mash in CIDR notation? (e.g. /24): " cidr_input
+                read -p "Enter the subnet in CIDR notation. (e.g. 24): " cidr_input
                 read -p "Are you sure you want to use "$cidr_input"? y/n: " cidr_confirm
                 if [[ $cidr_confirm = y ]]; then
                     if grep -q "$static_ip" $net_int; then
-                        sed -i "/"$static_ip"/c\        address "$static_ip""$cidr_input" " $net_int \
+                        sed -i "/"$static_ip"/c\        address "$static_ip"\/"$cidr_input" " $net_int \
                         && echo "Subnet has been added."
                         break
                     else
