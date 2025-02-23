@@ -22,6 +22,7 @@ is_valid_ip() {
         return 0  # IP is valid
     }
 
+# Start of the Script with options.
 while true; do
     # Input from user
     read -p $'\nChoose the install type:\n\n1. (OPTIONAL) Set Static IP\n2. Wireguard Server\nType "exit" to exit the script: ' install_type
