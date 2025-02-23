@@ -56,16 +56,16 @@ while true; do
                     echo "Please try again."
                 else
                     echo "not a valid answer. Please use \"y\" or \"n\"."
-                fi 
+                fi
             done
 
             # Adds the CIDR notation to the end of the IP.
             while true; do
-                read -p "Whats the subnet mash in CIDR notation? (e.g. \/24)": " cidr_input
+                read -p "Whats the subnet mash in CIDR notation? (e.g. /24): " cidr_input
                 read -p "Are you sure you want to use "$cidr_input"? y/n: " cidr_confirm
                 if [[ $cidr_confirm = y ]]; then
                     if grep -q "$static_ip" $net_int; then
-                        sed -i "/$static_ip/c\        address "$static_ip""$cidr_input" " $net_int \
+                        sed -i "/"$static_ip"/c\        address "$static_ip""$cidr_input" " $net_int \
                         && echo "Subnet has been added."
                         break
                     else
@@ -76,7 +76,7 @@ while true; do
                     echo "Please try again."
                 else
                     echo "not a valid answer. Please use \"y\" or \"n\"."
-                fi 
+                fi
             done
 
             # Edits the Gateway
@@ -117,9 +117,7 @@ while true; do
                 fi
             else
                 echo "systemd-resolved is already installed. Continuing..."
-            fi
-
-            
+            fi   
 
             # Loop until valid input
             while true; do
