@@ -22,6 +22,13 @@ is_valid_ip() {
         return 0  # IP is valid
     }
 
+#Function to check the user's CIDR input to make sure it's within 0-32.
+cidr_check() {
+    local cidr=$1
+        [[ $cidr =~ ^[0-9]+$ ]] || return 1
+	    ((cidr >= 0 && cidr <= 32)) && return 0 || return 1
+}
+
 # Start of the Script with options.
 while true; do
     # Input from user
@@ -43,19 +50,23 @@ while true; do
             while true; do
                 read -p "Input the static IP you would like to use. (e.g. 192.168.0.1): " static_ip
                 read -p "Are you sure you want to use "$static_ip"? y/n: " static_confirm
-                if [[ $static_confirm = y ]]; then
-                    if grep -q address $net_int; then
-                        sed -i "/address/c\        address "$static_ip" " $net_int \
-                        && echo "Address has been changed."
-                        break
+                if is_valid_ip "$static_ip"; then
+                    if [[ $static_confirm = y ]]; then
+                        if grep -q address $net_int; then
+                            sed -i "/address/c\        address "$static_ip" " $net_int \
+                            && echo "Address has been changed."
+                            break
+                        else
+                            echo -e "Failed to change address. Please make sure dhcp is on the correct line.\nExiting Script."
+                            exit 1
+                        fi
+                    elif [[ $static_confirm = n ]]; then
+                        echo "Please try again."
                     else
-                        echo -e "Failed to change address. Please make sure dhcp is on the correct line.\nExiting Script."
-                        exit 1
+                        echo "not a valid answer. Please use \"y\" or \"n\"."
                     fi
-                elif [[ $static_confirm = n ]]; then
-                    echo "Please try again."
                 else
-                    echo "not a valid answer. Please use \"y\" or \"n\"."
+                    echo "not a valid IP. Please enter a valid IP."
                 fi
             done
 
@@ -63,19 +74,23 @@ while true; do
             while true; do
                 read -p "Enter the subnet in CIDR notation. (e.g. 24): " cidr_input
                 read -p "Are you sure you want to use "$cidr_input"? y/n: " cidr_confirm
-                if [[ $cidr_confirm = y ]]; then
-                    if grep -q "$static_ip" $net_int; then
-                        sed -i "/"$static_ip"/c\        address "$static_ip"\/"$cidr_input" " $net_int \
-                        && echo "Subnet has been added."
-                        break
+                if cidr_check "$cidr_input"; then
+                    if [[ $cidr_confirm = y ]]; then
+                        if grep -q "$static_ip" $net_int; then
+                            sed -i "/"$static_ip"/c\        address "$static_ip"\/"$cidr_input" " $net_int \
+                            && echo "Subnet has been added."
+                            break
+                        else
+                            echo -e "Failed to change subnet. Please make sure dhcp is on the correct line.\nExiting Script."
+                            exit 1
+                        fi
+                    elif [[ $cidr_confirm = n ]]; then
+                        echo "Please try again."
                     else
-                        echo -e "Failed to change subnet. Please make sure dhcp is on the correct line.\nExiting Script."
-                        exit 1
+                        echo "not a valid answer. Please use \"y\" or \"n\"."
                     fi
-                elif [[ $cidr_confirm = n ]]; then
-                    echo "Please try again."
                 else
-                    echo "not a valid answer. Please use \"y\" or \"n\"."
+                    echo "Not a valid input. Please choose a number 0-32."
                 fi
             done
 
@@ -83,19 +98,23 @@ while true; do
             while true; do
                 read -p "Input the gateway: " static_gw
                 read -p "Are you sure you want to use "$static_gw"? y/n: " static_gw_confirm
-                if [[ $static_gw_confirm = y ]]; then
-                    if grep -q address $net_int; then
-                        sed -i "/gateway/c\        gateway "$static_gw" " $net_int \
-                        && echo "Gateway has been changed."
-                        break
+                if is_valid_ip "$static_gw"; then   
+                    if [[ $static_gw_confirm = y ]]; then
+                        if grep -q address $net_int; then
+                            sed -i "/gateway/c\        gateway "$static_gw" " $net_int \
+                            && echo "Gateway has been changed."
+                            break
+                        else
+                            echo -e "Failed to change Gateway. Please make sure dhcp is on the correct line.\nExiting Script."
+                            exit 1
+                        fi
+                    elif [[ $static_gw_confirm = n ]]; then
+                        echo "Please try again."
                     else
-                        echo -e "Failed to change Gateway. Please make sure dhcp is on the correct line.\nExiting Script."
-                        exit 1
+                        echo "not a valid answer. Please use \"y\" or \"n\"."
                     fi
-                elif [[ $static_gw_confirm = n ]]; then
-                    echo "Please try again."
                 else
-                    echo "not a valid answer. Please use \"y\" or \"n\"."
+                    echo "not a valid IP. Please enter a valid IP."
                 fi
             done
             echo -e "Network settings have been updated, and network has been refreshed.\nPlease connect using the new IP\nExiting script."
