@@ -187,7 +187,9 @@ while true; do
             else
                 echo "Openssh is already installed. Continuing..."
             fi
-            echo "The installation has been completed!"
+
+	    #Generate the keys for the server to use.
+	    echo "The installation has been completed!"
             break # Exit the loop
             ;;
         exit)
