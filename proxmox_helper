@@ -1,0 +1,86 @@
+#!/bin/bash
+
+#Starts user input for user variables.
+echo "Starting the helper script."
+echo "Please enter the DOMAIN NAME of the company. (e.g. apexunderground.com) This will be used in the Proxmox from address and the fail2ban address."
+read domain_email
+
+echo "For fail2ban, enter the amount of time to ban offenders. (e.g. 5m, 12h, 50d, 10y etc)."
+read bantime_input
+
+echo "For fail2ban, enter the maximum amount of retries before banning."
+read maxretry_input
+
+#Changes the repositories.
+pve_ent=/etc/apt/sources.list.d/pve-enterprise.list
+pve_ceph=/etc/apt/sources.list.d/ceph.list
+pve_rep=/etc/apt/sources.list
+pve_nosub=$(cat <<EOF
+deb http://download.proxmox.com/debian/pve bookworm pve-no-subscription
+EOF
+)
+
+sed -i 's/^deb/\#deb/' "$pve_ent" "$pve_ceph"
+
+printf '%s\n' "$pve_nosub" >> "$pve_rep"
+
+#This command takes away the nagging subscription pop up. It makes a backup of the original file just in case.
+sed -Ezi.bak "s/(function\(orig_cmd\) \{)/\1\n\torig_cmd\(\);\n\treturn;/g" \
+/usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
+
+sed -i "1a email_from: proxmox@$domain_email" /etc/pve/datacenter.cfg
+sed -i '/content/!b;/images/b;s/$/,images/' /etc/pve/storage.cfg
+sed -i '/^lvmthin: local-lvm/,+3 d' /etc/pve/storage.cfg
+
+#Install Fail2ban
+if ! which fail2ban-client &> /dev/null
+    then
+        echo "fail2ban not found. Installing..."
+        apt update && apt install fail2ban -y
+        if which fail2ban-client &> /dev/null
+            then
+                echo "fail2ban has been successfully installed."
+            else
+                echo "Installation failed."
+                exit 1 #stop the script if installtion fails.
+    fi
+else
+    echo "fail2ban is already installed."
+fi
+
+jail_conf=/etc/fail2ban/jail.conf
+jail_local=/etc/fail2ban/jail.local
+
+#Copy the jail.conf into a .local, which is to be taken by fail2ban as the real config.
+cp $jail_conf $jail_local
+
+#Editing the .local file.
+sed -i -e "s/sender = root@<fq-hostname>/sender = fail2ban@$domain_email/" \
+       -e 's/^action = %(action_)s/action = %(action_mw)s/' \
+       -e 's/backend = auto/backend = systemd/' \
+       -e "s/bantime  = 10m/bantime = $bantime_input/" \
+       -e "s/maxretry = 5/maxretry = $maxretry_input/" \
+       -e '/^\[sshd\]/a\enabled = true' "$jail_local"
+
+echo -e "\n[proxmox]\nenabled = true \
+\nport = https,http,8006 \
+\nfilter = proxmox" >> "$jail_local"
+
+#Creating and editing the proxmox filter.
+proxmox_filter=/etc/fail2ban/filter.d/proxmox.conf
+filter_def="[Definition]\nfailregex = pvedaemon\[.*authentication failure; rhost=<HOST> user=.* msg=.*\nignoreregex ="
+touch $proxmox_filter
+
+echo -e "$filter_def" > $proxmox_filter
+
+#This sets up fail2ban to not allow ipv6 connections. Mainly here to satisfy a pesky error.
+f2b_conf=/etc/fail2ban/fail2ban.conf
+f2b_local=/etc/fail2ban/fail2ban.local
+cp $f2b_conf $f2b_local
+sed -i '/^\[DEFAULT\]/a\allowipv6 = no' $f2b_local
+
+#restart fail2ban to apply changes.
+systemctl restart fail2ban
+
+#Update and upgrade as well as add ntfs support.
+apt upgrade -y && apt install ntfs-3g -y
