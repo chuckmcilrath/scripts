@@ -29,6 +29,24 @@ cidr_check() {
 	((cidr >= 0 && cidr <= 32))
 }
 
+# Function to check installs of important apps.
+check_install() {
+    local install_name="$1"
+	echo "looking for $install_name..."
+    	if ! dpkg -l | grep -qw "$install_name"; then
+	    echo "Installing $install_name..."
+	    apt install $install_name -y &> /dev/null
+	    if dpkg -l | grep -qw "$install_name"; then
+		echo "$install_name has been successfully installed."
+	    else
+		echo "Installation failed. Please clear the error and try again."
+		exit 1
+	    fi
+	else
+	    echo "$install_name is already installed. Continuing..."
+	fi
+}
+
 # Start of the Script with options.
 while true; do
     # Input from user
@@ -124,19 +142,10 @@ while true; do
         2)
             echo -e "Starting the installation of the Wireguard server...\nStarting update and upgrade for this machine..."
             apt update &> /dev/null && apt upgrade -y &> /dev/null
-            echo -e "apt update and apt upgrade have completed.\nLooking for systemd-resolved..."
-            if ! dpkg -l | grep systemd-resolved &> /dev/null; then
-                echo "systemd-resolved not found. Installing systemd-resolved..."
-                apt install systemd-resolved -y &> /dev/null
-                if dpkg -l | grep systemd-resolved &> /dev/null; then
-                        echo "systemd-resolved has been successfully installed."
-                    else
-                        echo "Installation failed. Please clear the error and try again. Exiting Wireguard installation."
-                        exit 1
-                fi
-            else
-                echo "systemd-resolved is already installed. Continuing..."
-            fi   
+            echo "apt update and apt upgrade have completed."
+
+	    # looks for and installs systemd-resolved
+	    check_install "systemd-resolved"
 
             # Loop until valid input
             while true; do
@@ -156,39 +165,14 @@ while true; do
                 fi
             done
 
-            #Install iptables
-            echo "Looking for iptables..."
-            if ! dpkg -l | grep iptables &> /dev/null; then
-                echo "iptables not found. Installing iptables..."
-                apt install iptables -y &> /dev/null
-                if dpkg -l | grep iptables &> /dev/null; then
-                        echo "iptables has been successfully installed."
-                    else
-                        echo "Installation failed. Please clear the error and try again. Exiting Wireguard installation."
-                        exit 1
-                fi
-            else
-                echo "iptables is already installed. Continuing..."
-            fi
+            # looks for and installs the rest of the needed applications
+	    check_install "iptables"
+	    check_install "openssh-client"
+	    check_install "openssh-server"
+	    check_install "openssh-sftp-server"
+	    check_install "wireguard"
 
-            #Install openssh
-            echo "looking for openssh..."
-            if ! dpkg -l | grep openssh &> /dev/null; then
-                echo "Openssh not found. Installing openssh and it's dependencies..."
-                apt install openssh-client -y &> /dev/null \
-                && apt install openssh-server -y &> /dev/null \
-                && apt install openssh-sftp-server -y &> /dev/null
-                if dpkg -l | grep ssh &> /dev/null; then
-                        echo "openssh and it's dependencies has been successfully installed."
-                    else
-                        echo "Installation failed. Please clear the error and try again. Exiting Wireguard installation."
-                        exit 1
-                fi
-            else
-                echo "Openssh is already installed. Continuing..."
-            fi
-
-	    #Generate the keys for the server to use.
+	    
 	    echo "The installation has been completed!"
             break # Exit the loop
             ;;
