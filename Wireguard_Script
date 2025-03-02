@@ -210,8 +210,8 @@ EOF
 	    fi
  
 	    # print the public key for the user to use in clients.
-	    Echo -e "Printing the Public key\n$public_key"
-	    Echo "Please copy this key to use for setting up the client"
+	    echo -e "Printing the Public key\n$public_key"
+	    echo "Please copy this key to use for setting up the client"
 	    echo "The Wireguard Server installation has been completed!"
             break # Exit the loop
             ;;
