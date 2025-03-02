@@ -252,6 +252,7 @@ EOF
 PublicKey = $peer_key
 AllowedIPs = $peer_ip/32
 EOF
+
 					echo "Peer added successfully."
 				else
 					echo "Input not valid. Please double check your input."
