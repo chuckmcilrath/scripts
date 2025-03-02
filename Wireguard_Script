@@ -245,7 +245,7 @@ EOF
 					invalid_input=true
 				fi
 	
-				if [[ $"invalid_input" = false ]]; then
+				if [[ "$invalid_input" == false ]]; then
 					cat <<EOF >> /etc/wireguard/wg0.conf
 [Peer]
 # $peer_name
