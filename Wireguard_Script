@@ -208,9 +208,11 @@ PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEP
 PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o $interf -j MASQUERADE
 EOF
 	    fi
-
-
-	    echo "The installation has been completed!"
+ 
+	    # print the public key for the user to use in clients.
+	    Echo -e "Printing the Public key\n$public_key"
+	    Echo "Please copy this key to use for setting up the client"
+	    echo "The Wireguard Server installation has been completed!"
             break # Exit the loop
             ;;
         exit)
