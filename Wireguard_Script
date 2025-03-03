@@ -77,7 +77,7 @@ while true; do
                 read -p "Input the static IP you would like to use. (e.g. 192.168.0.1): " static_ip
                 read -p "Are you sure you want to use "$static_ip"? y/n: " static_confirm
                 if is_valid_ip "$static_ip"; then
-                    if [[ $static_confirm = y ]]; then
+                    if [[ $static_confirm == y ]]; then
                         if grep -q address $net_int; then
                             sed -i "/address/c\        address "$static_ip" " $net_int \
                             && echo "Address has been changed."
@@ -86,7 +86,7 @@ while true; do
                             echo -e "Failed to change address. Please make sure dhcp is on the correct line.\nExiting Script."
                             exit 1
                         fi
-                    elif [[ $static_confirm = n ]]; then
+                    elif [[ $static_confirm == n ]]; then
                         echo "Please try again."
                     else
                         echo "not a valid answer. Please use \"y\" or \"n\"."
@@ -101,7 +101,7 @@ while true; do
                 read -p "Enter the subnet in CIDR notation. (e.g. 24): " cidr_input
                 read -p "Are you sure you want to use "$cidr_input"? y/n: " cidr_confirm
                 if cidr_check "$cidr_input"; then
-                    if [[ $cidr_confirm = y ]]; then
+                    if [[ $cidr_confirm == y ]]; then
                         if grep -q "$static_ip" $net_int; then
                             sed -i "/"$static_ip"/c\        address "$static_ip"\/"$cidr_input" " $net_int \
                             && echo "Subnet has been added."
@@ -110,7 +110,7 @@ while true; do
                             echo -e "Failed to change subnet. Please make sure dhcp is on the correct line.\nExiting Script."
                             exit 1
                         fi
-                    elif [[ $cidr_confirm = n ]]; then
+                    elif [[ $cidr_confirm == n ]]; then
                         echo "Please try again."
                     else
                         echo "not a valid answer. Please use \"y\" or \"n\"."
@@ -231,57 +231,74 @@ EOF
 	        read -p $'\n1. Add a new Peer.\n2. Remove a Peer.\n3. Edit a Peer.\n4. Exit back to the main menu\n: ' peer_choice
 		case "$peer_choice" in
 		    1)
-			# Add a Peer
-			read -p $'Enter a name for the peer\n: ' peer_name
-			read -p $'Enter the IP for the peer to use\n: ' peer_ip
-			read -p $'Enter the public key from the client peer\n: ' peer_key
+				# Add a Peer
+
+				# List the peers
+				echo -e "\n Here are the list of Peers currently configured:"
+			    awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
+
+				# User input
+				read -p $'Enter a name for the peer\n: ' peer_name
+				read -p $'Enter the IP for the peer to use\n: ' peer_ip
+				read -p $'Enter the public key from the client peer\n: ' peer_key
 	
-			invalid_input=false
+				invalid_input=false
 	
-			if ! is_valid_ip "$peer_ip"; then
-			echo "'$peer_ip' is not a valid IP Address."
-			invalid_input=true
-			fi
+				if ! is_valid_ip "$peer_ip"; then
+					echo "'$peer_ip' is not a valid IP Address."
+					invalid_input=true
+				fi
 	
-			if ! key_check "$peer_key"; then
-			    echo "'$peer_key' is not a valid public key."
-			    invalid_input=true
-			fi
+				if ! key_check "$peer_key"; then
+			    	echo "'$peer_key' is not a valid public key."
+			    	invalid_input=true
+				fi
 	
-			if [[ "$invalid_input" == false ]]; then
-			    cat <<EOF >> /etc/wireguard/wg0.conf
+				if [[ "$invalid_input" == false ]]; then
+			    	cat <<EOF >> /etc/wireguard/wg0.conf
 [Peer]
 # $peer_name
 PublicKey = $peer_key
 AllowedIPs = $peer_ip/32
 EOF
-			    echo "Peer added successfully."
-			else
-			    echo "Input not valid. Please double check your input."
-			fi
+			    	echo "Peer added successfully."
+				else
+			    	echo "Input not valid. Please double check your input."
+				fi
 			;;
 		    2)
-			# Delete a peer
-			while true; do
-			    # List the peers
+				# Delete a peer
+				while true; do
+			    	# List the peers
+					echo -e "\n Here are the list of Peers currently configured:"
+			    	awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
+
+			    	# Ask the user which peer they would like to select
+			    	read -p $'Which user would you like to delete?\n: ' user_select
+			    	if grep -q "# $user_select" /etc/wireguard/wg0.conf; then
+						sed -i '/\[Peer\]/ { N; /\n# $user_select/ { N; N; d; } }' /etc/wireguard/wg0.conf
+						sed -i '/^$/N;/^\n$/D' /etc/wireguard/wg0.conf
+					echo "User '$user_select' deleted."
+						break
+			    	else
+						echo "User not found, please try again."
+			    	fi
+				done
+			;;
+			3)
+				# Edit a Peer
+				# List the peers
+				echo -e "\n Here are the list of Peers currently configured:"
 			    awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
 
-			    # Ask the user which peer they would like to select
-			    read -p $'Which user would you like to delete?\n: ' user_select
-			    if grep -q "# $user_select" /etc/wireguard/wg0.conf; then
-				sed -i '/\[Peer\]/ { N; /\n# $user_select/ { N; N; d; } }' /etc/wireguard/wg0.conf
-				sed -i '/^$/N;/^\n$/D' /etc/wireguard/wg0.conf
-				echo "User '$user_select' deleted."
-				break
-			    else
-				echo "User not found, please try again."
-			    fi
-			done
+				# User choice to edit
+				read -p 'Which
+
 			;;
 		    4)
-			# Exit
-			echo "Exiting the peer configuration menu."
-			break
+				# Exit
+				echo "Exiting the peer configuration menu."
+				break
 			;;
 		esac
 	    done
