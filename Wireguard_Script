@@ -295,7 +295,7 @@ EOF
 				    # User choice to edit
 					read -p $'\nWhich user would you like to edit?\n: ' user_select2
 					if grep -q "# $user_select2" /etc/wireguard/wg0.conf; then
-						read -p $'Which setting would you like to edit?\n\n1. Change the Public Key\n2. Change the users IP\n3. Exit back to the previous menu: ' setting_select
+						read -p $'Which setting would you like to edit?\n\n1. Change the Public Key\n2. Change the users IP\n3. Exit back to the previous menu\n: ' setting_select
 						case "$setting_select" in
 							1)
 								while true; do
@@ -315,7 +315,7 @@ EOF
                                     read -p 'Please enter the new IP you would like to use: ' new_ip
 								    # change the ip
 								    if is_valid_ip "$new_ip"; then
-                                        sed -i "/^AllowedIPs =/c\AllowedIPs = {$new_ip}/32" /etc/wireguard/wg0.conf
+                                        sed -i "/^AllowedIPs =/c\AllowedIPs = {$new_ip}\/32" /etc/wireguard/wg0.conf
 								        echo "The IP has been changed. Please restart the Wireguard server for it to take affect."
 								        break
                                     else
