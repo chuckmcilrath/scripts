@@ -276,7 +276,7 @@ EOF
 			    	# Ask the user which peer they would like to select
 			    	read -p $'\nWhich user would you like to delete?\n: ' user_select
 			    	if grep -q "# $user_select" /etc/wireguard/wg0.conf; then
-						sed -i '/\[Peer\]/ { N; /\n# $user_select/ { N; N; d; } }' /etc/wireguard/wg0.conf
+						sed -i "/\[Peer\]/ { N; /\n# $user_select/ { N; N; d; } }" /etc/wireguard/wg0.conf
 						sed -i '/^$/N;/^\n$/D' /etc/wireguard/wg0.conf
 					echo "User '$user_select' deleted."
 						break
