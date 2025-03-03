@@ -226,7 +226,7 @@ EOF
             ;;
         3)
 	    # Start of the config for peers for the Server
-	    echo "What would you like to do?"
+	    echo -e "\nWhat would you like to do?"
 	    while true; do
 	        read -p $'\n1. Add a new Peer.\n2. Remove a Peer.\n3. Edit a Peer.\n4. Exit back to the main menu\n: ' peer_choice
 		case "$peer_choice" in
