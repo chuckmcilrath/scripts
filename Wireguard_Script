@@ -234,11 +234,11 @@ EOF
 				# Add a Peer
 
 				# List the peers
-				echo -e "\n Here are the list of Peers currently configured:"
+				echo -e "\nHere are the list of Peers currently configured:\n"
 			    awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
 
 				# User input
-				read -p $'Enter a name for the peer\n: ' peer_name
+				read -p $'\nEnter a name for the peer\n: ' peer_name
 				read -p $'Enter the IP for the peer to use\n: ' peer_ip
 				read -p $'Enter the public key from the client peer\n: ' peer_key
 	
@@ -314,8 +314,8 @@ EOF
 								while true; do
                                     read -p 'Please enter the new IP you would like to use: ' new_ip
 								    # change the ip
-								    if is_valid_ip "#new_ip"; then
-                                        sed -i "/^AllowedIPs =/c\AllowedIPs = $new_ip" /etc/wireguard/wg0.conf
+								    if is_valid_ip "$new_ip"; then
+                                        sed -i "/^AllowedIPs =/c\AllowedIPs = {$new_ip}/32" /etc/wireguard/wg0.conf
 								        echo "The IP has been changed. Please restart the Wireguard server for it to take affect."
 								        break
                                     else
