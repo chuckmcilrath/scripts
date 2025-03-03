@@ -225,67 +225,66 @@ EOF
             break # Exit the loop
             ;;
         3)
-	    	# Start of the config for peers for the Server
-	    	echo "What would you like to do?"
-	    	while true; do
-			read -p $'\n1. Add a new Peer.\n2. Remove a Peer.\n3. Edit a Peer.\n4. Exit back to the main menu\n: ' peer_choice
-				case "$peer_choice" in
-					1)
-						# Add a Peer
-						read -p $'Enter a name for the peer\n: ' peer_name
-			    		read -p $'Enter the IP for the peer to use\n: ' peer_ip
-			    		read -p $'Enter the public key from the client peer\n: ' peer_key
+	    # Start of the config for peers for the Server
+	    echo "What would you like to do?"
+	    while true; do
+	        read -p $'\n1. Add a new Peer.\n2. Remove a Peer.\n3. Edit a Peer.\n4. Exit back to the main menu\n: ' peer_choice
+		case "$peer_choice" in
+		    1)
+			# Add a Peer
+			read -p $'Enter a name for the peer\n: ' peer_name
+			read -p $'Enter the IP for the peer to use\n: ' peer_ip
+			read -p $'Enter the public key from the client peer\n: ' peer_key
 	
-						invalid_input=false
+			invalid_input=false
 	
-						if ! is_valid_ip "$peer_ip"; then
-							echo "'$peer_ip' is not a valid IP Address."
-							invalid_input=true
-						fi
+			if ! is_valid_ip "$peer_ip"; then
+			echo "'$peer_ip' is not a valid IP Address."
+			invalid_input=true
+			fi
 	
-						if ! key_check "$peer_key"; then
-							echo "'$peer_key' is not a valid public key."
-							invalid_input=true
-						fi
+			if ! key_check "$peer_key"; then
+			    echo "'$peer_key' is not a valid public key."
+			    invalid_input=true
+			fi
 	
-						if [[ "$invalid_input" == false ]]; then
-							cat <<EOF >> /etc/wireguard/wg0.conf
+			if [[ "$invalid_input" == false ]]; then
+			    cat <<EOF >> /etc/wireguard/wg0.conf
 [Peer]
 # $peer_name
 PublicKey = $peer_key
 AllowedIPs = $peer_ip/32
 EOF
-							echo "Peer added successfully."
-						else
-							echo "Input not valid. Please double check your input."
-						fi
-						;;
-					2)
-						while true; do
-							# Delete a Peer
+			    echo "Peer added successfully."
+			else
+			    echo "Input not valid. Please double check your input."
+			fi
+			;;
+		    2)
+			# Delete a peer
+			while true; do
+			    # List the peers
+			    awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
 
-							# List the peers
-							awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
-
-							# Ask the user which peer they would like to select
-							read -p $'Which user would you like to delete?\n: ' user_select
-								if grep -q "# $user_select" /etc/wireguard/wg0.conf; then
-									sed -i '/\[Peer\]/ { N; /\n# $user_select/ { N; N; d; } }' /etc/wireguard/wg0.conf
-									sed -i '/^$/N;/^\n$/D' /etc/wireguard/wg0.conf
-									echo "User '$user_select' deleted."
-									break
-								else
-									echo "User not found, please try again."
-								fi
-						done
-						;;
-					4)
-						# Exit
-						echo "Exiting the peer configuration menu."
-						break
-						;;
-				esac
-	    	done
+			    # Ask the user which peer they would like to select
+			    read -p $'Which user would you like to delete?\n: ' user_select
+			    if grep -q "# $user_select" /etc/wireguard/wg0.conf; then
+				sed -i '/\[Peer\]/ { N; /\n# $user_select/ { N; N; d; } }' /etc/wireguard/wg0.conf
+				sed -i '/^$/N;/^\n$/D' /etc/wireguard/wg0.conf
+				echo "User '$user_select' deleted."
+				break
+			    else
+				echo "User not found, please try again."
+			    fi
+			done
+			;;
+		    4)
+			# Exit
+			echo "Exiting the peer configuration menu."
+			break
+			;;
+		esac
+	    done
 			;;
 	exit)
             echo "The script will now exit."
