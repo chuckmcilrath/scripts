@@ -270,11 +270,11 @@ EOF
 				# Delete a peer
 				while true; do
 			    	# List the peers
-					echo -e "\n Here are the list of Peers currently configured:"
+					echo -e "\nHere are the list of Peers currently configured:\n"
 			    	awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
 
 			    	# Ask the user which peer they would like to select
-			    	read -p $'Which user would you like to delete?\n: ' user_select
+			    	read -p $'\nWhich user would you like to delete?\n: ' user_select
 			    	if grep -q "# $user_select" /etc/wireguard/wg0.conf; then
 						sed -i '/\[Peer\]/ { N; /\n# $user_select/ { N; N; d; } }' /etc/wireguard/wg0.conf
 						sed -i '/^$/N;/^\n$/D' /etc/wireguard/wg0.conf
@@ -293,7 +293,7 @@ EOF
 			        awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
 
 				    # User choice to edit
-					read -p $'\nWhich user would you like to edit?: ' user_select2
+					read -p $'\nWhich user would you like to edit?\n: ' user_select2
 					if grep -q "# $user_select2" /etc/wireguard/wg0.conf; then
 						read -p $'Which setting would you like to edit?\n\n1. Change the Public Key\n2. Change the users IP\n3. Exit back to the previous menu: ' setting_select
 						case "$setting_select" in
