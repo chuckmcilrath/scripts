@@ -54,6 +54,17 @@ key_check() {
     return 1
 }
 
+# Function to check if a port number is between 1-65355.
+port_num_check() {
+    local num="$1"
+
+    [[ ! $num =~ ^[1-9][0-9]*$ ]] && return 1  # Ensure it's a positive integer
+    (( num < 1 || num > 65535 )) && return 1   # Ensure it's within the valid port range
+
+    return 0
+}
+
+
 # Start of the Script with options.
 while true; do
     # Input from user
@@ -370,32 +381,48 @@ EOF
 	        echo "export public_key=$public_key" >> ~/.bashrc
 
             # Gets the users input
-            read -p 'What is the IP Address of this Peer?: ' peer_address
-            read -p 'Please enter in the Public Key of the Wireguard Server this Peer is connecting to: ' peer_pk
-            read -p 'Please enter the WAN Address of the Wireguard Server this Peer is connecting to: ' wan_address
-            read -p 'Please enter the port number the Wireguard Server is using (Default is 51820): ' port_num
+            while true; do
+                read -p 'What is the IP Address of this Peer?: ' peer_address
+                read -p 'Please enter in the Public Key of the Wireguard Server this Peer is connecting to: ' peer_pk
+                read -p 'Please enter the WAN Address of the Wireguard Server this Peer is connecting to: ' wan_address
+                read -p 'Please enter the port number the Wireguard Server is using (Default is 51820): ' port_num
 
-            # Start of the checking inputs process
-            
-            invalid_input_peer=false
+                # Start of the checking inputs process
 
-            if ! is_valid_ip "$peer_address"; then
-                echo "
-                invalid_input_peer=true
-            fi
+                if ! is_valid_ip "$peer_address"; then
+                    echo "The Peer Address is not valid. Please try again." \
+                    continue
+                fi
+
+                if ! key_check "$peer_pk"; then
+                    echo "The Public Key is not valid. Please try again." \
+                    continue
+                fi
+
+                if ! is_valid_ip "$wan_address"; then
+                    echo "The WAN address is not a valid address. Please try again." \
+                    continue
+                fi
+
+                if ! port_num_check "$port_num"; then
+                    echo "The port number is not a valid port number. Please try again." \
+                    continue
+                fi
+                break
+            done
 
             # Checks and makes the config folder
 	        if [ ! -f /etc/wireguard/wg0.conf ]; then
 		    cat <<EOF > /etc/wireguard/wg0.conf
 [Interface]
 PrivateKey = $private_key
-Address = /32
+Address = $peer_address/32
 
 [Peer]
 # Wireguard VM server on local Proxmox
-PublicKey = PUBLIC+KEY+OF+WGSERVER
+PublicKey = $peer_pk
 AllowedIPs = 0.0.0.0/0
-EndPoint = PUBLICIP+of+wgserver:51820
+EndPoint = $wan_address:$port_num
 EOF
 	        fi
 
