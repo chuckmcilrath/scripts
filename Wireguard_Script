@@ -377,9 +377,12 @@ EOF
 
             # Start of the checking inputs process
             
-            invalid_input2=false
+            invalid_input_peer=false
 
-            if  
+            if ! is_valid_ip "$peer_address"; then
+                echo "
+                invalid_input_peer=true
+            fi
 
             # Checks and makes the config folder
 	        if [ ! -f /etc/wireguard/wg0.conf ]; then
