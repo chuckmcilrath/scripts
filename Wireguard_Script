@@ -57,7 +57,7 @@ key_check() {
 # Start of the Script with options.
 while true; do
     # Input from user
-    read -p $'\nChoose the install type:\n\n1. (OPTIONAL) Set Static IP\n2. Wireguard Server\n3. Wireguard Server Peer Config\nType "exit" to exit the script: ' install_type
+    read -p $'\nChoose the install type:\n\n1. (OPTIONAL) Set Static IP\n2. Wireguard Server Setup\n3. Wireguard Server Peer Config\n4. Client Peer Setup\nType "exit" to exit the script: ' install_type
     case "$install_type" in
         1) 
 			# Static IP configuration
@@ -342,14 +342,67 @@ EOF
 			;;
 		esac
 	    done
-			;;
-	exit)
+        ;;
+        4)
+            # Client Peer Setup
+            echo -e "Starting the installation of the Wireguard Client...\nStarting update and upgrade for this machine..."
+            apt update &> /dev/null && apt upgrade -y &> /dev/null
+            echo "apt update and apt upgrade have completed."
+
+            # Checks on wireguard being installed. 
+            check_install "wireguard"
+
+	        # checks to see if the private and public keys are generated.
+	        if [ ! -f /etc/wireguard/private.key ]; then
+		    umask 077 && wg genkey > /etc/wireguard/private.key
+	        fi
+
+	        if [ ! -f /etc/wireguard/public.key ]; then
+		    wg pubkey < /etc/wireguard/private.key > /etc/wireguard/public.key
+	        fi
+
+	        # stores the private and public keys in variables for later use.
+	        private_key=$(cat /etc/wireguard/private.key)
+	        public_key=$(cat /etc/wireguard/public.key)
+
+	        # Exports the varibles to be used ouside of the script
+	        echo "export private_key=$private_key" >> ~/.bashrc
+	        echo "export public_key=$public_key" >> ~/.bashrc
+
+            # Gets the users input
+            read -p 'What is the IP Address of this Peer?: ' peer_address
+            read -p 'Please enter in the Public Key of the Wireguard Server this Peer is connecting to: ' peer_pk
+            read -p 'Please enter the WAN Address of the Wireguard Server this Peer is connecting to: ' wan_address
+            read -p 'Please enter the port number the Wireguard Server is using (Default is 51820): ' port_num
+
+            # Start of the checking inputs process
+            
+            invalid_input2=false
+
+            if  
+
+            # Checks and makes the config folder
+	        if [ ! -f /etc/wireguard/wg0.conf ]; then
+		    cat <<EOF > /etc/wireguard/wg0.conf
+[Interface]
+PrivateKey = $private_key
+Address = /32
+
+[Peer]
+# Wireguard VM server on local Proxmox
+PublicKey = PUBLIC+KEY+OF+WGSERVER
+AllowedIPs = 0.0.0.0/0
+EndPoint = PUBLICIP+of+wgserver:51820
+EOF
+	        fi
+
+        ;;
+        exit)
             echo "The script will now exit."
             break
-            ;;
+        ;;
         *)
             echo "Invalid Option."
-            ;;
+        ;;
     esac
 done
-
