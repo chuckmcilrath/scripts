@@ -250,51 +250,66 @@ EOF
 				# Add a Peer
 
 				# List the peers
-				echo -e "\nHere are the list of Peers currently configured:\n"
-			    awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
-
+			    if [ -f /etc/wireguard/wg0.conf ]; then
+			        echo -e "\nHere are the list of Peers currently configured:\n"
+                    awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
+                    read -p $'\nEnter a name for the peer\n: ' peer_name
+                else
+                    echo "Wireguard config file not found, please run either the Wireguard Server or Wireguard Peer setup."
+                    break
+                fi
+                
+                
 				# User input
-				read -p $'\nEnter a name for the peer\n: ' peer_name
-				read -p $'Enter the IP for the peer to use\n: ' peer_ip
-				read -p $'Enter the public key from the client peer\n: ' peer_key
-	
-				invalid_input=false
-	
-				if ! is_valid_ip "$peer_ip"; then
-					echo "'$peer_ip' is not a valid IP Address."
-					invalid_input=true
-				fi
-	
-				if ! key_check "$peer_key"; then
-			    	echo "'$peer_key' is not a valid public key."
-			    	invalid_input=true
-				fi
-	
-				if [[ "$invalid_input" == false ]]; then
-			    	cat <<EOF >> /etc/wireguard/wg0.conf
+                while true; do
+                    read -p $'Enter the IP for the peer to use\n: ' peer_ip
+				    if ! is_valid_ip "$peer_ip"; then
+					    echo "'$peer_ip' is not a valid IP Address."
+                    else
+                        break
+				    fi
+                done
+
+                while true; do
+                    read -p $'Enter the public key from the client peer\n: ' peer_key
+				    if ! key_check "$peer_key"; then
+			    	    echo "'$peer_key' is not a valid public key."
+                    else
+                        break
+				    fi
+                done
+                
+                while true; do
+                    if [ ! -f /etc/wireguard/wg0.conf ]; then
+			    	    cat <<EOF >> /etc/wireguard/wg0.conf
 [Peer]
 # $peer_name
 PublicKey = $peer_key
 AllowedIPs = $peer_ip/32
 EOF
 			    	echo "Peer added successfully."
-				else
-			    	echo "Input not valid. Please double check your input."
-				fi
+				    fi
+                done
 			;;
 		    2)
 				# Delete a peer
-				while true; do
-			    	# List the peers
-					echo -e "\nHere are the list of Peers currently configured:\n"
-			    	awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
-
-			    	# Ask the user which peer they would like to select
+				
+                # List the peers
+                if [ -f /etc/wireguard/wg0.conf ]; then
+			    	echo -e "\nHere are the list of Peers currently configured:\n" 
+                    awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
+                 else
+                    echo "Wireguard config file not found, please run either the Wireguard Server or the Wireguard Peer Setup."
+                    break
+                fi
+			    	
+                # Ask the user which peer they would like to select
+                while true; do
 			    	read -p $'\nWhich user would you like to delete?\n: ' user_select
 			    	if grep -q "# $user_select" /etc/wireguard/wg0.conf; then
 						sed -i "/\[Peer\]/ { N; /\n# $user_select/ { N; N; d; } }" /etc/wireguard/wg0.conf
 						sed -i '/^$/N;/^\n$/D' /etc/wireguard/wg0.conf
-					echo "User '$user_select' deleted."
+					    echo "User '$user_select' deleted."
 						break
 			    	else
 						echo "User not found, please try again."
@@ -303,11 +318,16 @@ EOF
 			;;
 			3)
 				# Edit a peer.
-				while true; do
-				    # List the peers
-				    echo -e "\nHere are the list of Peers currently configured:\n"
-			        awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
+				# List the peers
+			    if [ -f /etc/wireguard/wg0.conf ]; then
+			    	echo -e "\nHere are the list of Peers currently configured:\n"
+                    awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
+                else
+                    echo "Wireguard config file not found, please run either the Wireguard Server or Wireguard Peer setup."
+                    break
+                fi
 
+                while true; do
 				    # User choice to edit
 					read -p $'\nWhich user would you like to edit?\n: ' user_select2
 					if grep -q "# $user_select2" /etc/wireguard/wg0.conf; then
