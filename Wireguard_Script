@@ -161,6 +161,7 @@ while true; do
         2)
             # Wireguard Server Install and Setup
 			echo -e "Starting the installation of the Wireguard server...\nStarting update and upgrade for this machine..."
+            export DEBIAN_FRONTEND=noninteractive
             apt update &> /dev/null && apt upgrade -y &> /dev/null
             echo "apt update and apt upgrade have completed."
 
@@ -357,6 +358,7 @@ EOF
         4)
             # Client Peer Setup
             echo -e "Starting the installation of the Wireguard Client...\nStarting update and upgrade for this machine..."
+            export DEBIAN_FRONTEND=noninteractive
             apt update &> /dev/null && apt upgrade -y &> /dev/null
             echo "apt update and apt upgrade have completed."
 
