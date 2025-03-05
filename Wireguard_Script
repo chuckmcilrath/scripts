@@ -464,6 +464,13 @@ EndPoint = $wan_address:$port_num
 EOF
 	        fi
 
+            echo "Starting the Wireguard Service..."
+            # Enables the Wg0 as a service to start on boot.
+            systemctl enable wg-quick@wg0.service \
+            && systemctl daemon-reload \
+            && systemctl start wg-quick@wg0 \
+            && echo "The Client Peer setup has been completed!"
+
         ;;
         exit)
             echo "The script will now exit."
