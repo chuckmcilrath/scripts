@@ -380,35 +380,41 @@ EOF
 	        echo "export private_key=$private_key" >> ~/.bashrc
 	        echo "export public_key=$public_key" >> ~/.bashrc
 
-            # Gets the users input
+            # Start of the checking inputs process
             while true; do
-                read -p 'What is the IP Address of this Peer?: ' peer_address
-                read -p 'Please enter in the Public Key of the Wireguard Server this Peer is connecting to: ' peer_pk
-                read -p 'Please enter the WAN Address of the Wireguard Server this Peer is connecting to: ' wan_address
-                read -p 'Please enter the port number the Wireguard Server is using (Default is 51820): ' port_num
-
-                # Start of the checking inputs process
-
-                if ! is_valid_ip "$peer_address"; then
-                    echo "The Peer Address is not valid. Please try again." \
-                    continue
+                read -p $'Please enter the IP Address for this Peer\n: ' peer_address
+                if is_valid_ip "$peer_address"; then
+                    break
+                else
+                    echo "The Peer Address is not valid. Please try again."
                 fi
+            done
 
-                if ! key_check "$peer_pk"; then
-                    echo "The Public Key is not valid. Please try again." \
-                    continue
+            while true; do
+                read -p $'Please enter in the Public Key of the Wireguard Server this Peer is connecting to\n: ' peer_pk
+                if key_check "$peer_pk"; then
+                    break
+                else
+                    echo "The Public Key is not valid. Please try again."
                 fi
+            done
 
-                if ! is_valid_ip "$wan_address"; then
-                    echo "The WAN address is not a valid address. Please try again." \
-                    continue
+            while true; do
+                read -p $'Please enter the WAN Address of the Wireguard Server this Peer is connecting to\n: ' wan_address
+                if is_valid_ip "$wan_address"; then
+                    break
+                else
+                    echo "The WAN address is not a valid address. Please try again."
                 fi
+            done
 
-                if ! port_num_check "$port_num"; then
-                    echo "The port number is not a valid port number. Please try again." \
-                    continue
+            while true; do
+                read -p $'Please enter the port number the Wireguard Server is using\n(Default is 51820): ' port_num
+                if port_num_check "$port_num"; then
+                    break
+                else
+                    echo "The port number is not a valid port number. Please try again."
                 fi
-                break
             done
 
             # Checks and makes the config folder
