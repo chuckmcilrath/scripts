@@ -229,7 +229,12 @@ PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEP
 PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o $interf -j MASQUERADE
 EOF
 	    fi
- 
+
+        # Enables the Wg0 as a service to start on boot.
+        systemctl enable wg-quick@wg0.service \
+        && systemctl daemon-reload \
+        && systemctl start wg-quick@wg0
+
 	    # print the public key for the user to use in clients.
 	    echo -e "\nPrinting the Public key\n\n$public_key\n\n"
 	    echo "Please copy this key to use for setting up the client"
