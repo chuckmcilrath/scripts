@@ -159,6 +159,14 @@ while true; do
             exit 1
             ;;
         2)
+            # Checks to see if the config file is already there, if it is, it will break.
+			if [ ! -f /etc/wireguard/wg0.conf ]; then
+                :
+            else
+                echo "Wireguard config found, please run the cleanup option if you need to reinstall."
+                break
+            fi
+
             # Wireguard Server Install and Setup
 			echo -e "Starting the installation of the Wireguard server...\nStarting update and upgrade for this machine..."
             export DEBIAN_FRONTEND=noninteractive
@@ -386,6 +394,14 @@ EOF
 	    done
         ;;
         4)
+            # Checks to see if the config file is already there, if it is, it will break.
+			if [ ! -f /etc/wireguard/wg0.conf ]; then
+                :
+            else
+                echo "Wireguard config found, please run the cleanup option if you need to reinstall."
+                break
+            fi
+
             # Client Peer Setup
             echo -e "Starting the installation of the Wireguard Client...\nStarting update and upgrade for this machine..."
             export DEBIAN_FRONTEND=noninteractive
@@ -479,33 +495,37 @@ EOF
         5)
             # Edit the Client Peer Configuration file.
 			if [ -f /etc/wireguard/wg0.conf ]; then
-			    continue
+			    :
             else
                 echo "Wireguard config file not found, please run either the Wireguard Server or Wireguard Peer setup."
                 break
             fi
 
             while true; do
-                read -p $'Choose which option you'd like to edit\n1. Edit this Peer's Address\n2. Edit the remote WG server's Public Key\n3. Edit Allowed IP's\n4. Edit the Endpoint's IP. (Remote WG Server's WAN)\n5. Edit the port of the remote WG Server\nType \"Exit\" to go back to the main menu\n: ' client_input
+                read -p $'Choose which option you would like to edit\n1. Edit the peer address\n2. Edit the remote Wireguard Public Key\n3. Edit Allowed IPs\n4. Edit the IP and port of the EndPoint. (Remote WG WAN and port)\n5. Exit to the previous menu\n: ' client_input
                 case "$client_input" in
                     1)
                         # Edit the IP Address
-                            while true; do
-                                read -p $'Please enter the new IP you would like to use\n: ' new_peer_ip
-								# change the ip
-								if is_valid_ip "$new_peer_ip"; then
-								    sed -i "/^Address =/c\Address = $new_peer_ip" /etc/wireguard/wg0.conf
-                                    echo "The IP has been changed. Restarting Wireguard..." \
-                                    && systemctl restart wg-quick@wg0.service
-								    break
-                                else
-                                    echo "IP is not valid. Please try again."
-                                fi
-                            done
+                        while true; do
+                            echo -e "\nHere is the IP for this connection:"
+                            grep '^Address' /etc/wireguard/wg0.conf
+                            read -p $'\nPlease enter the new IP you would like to use\n: ' new_peer_ip
+							# change the ip
+							if is_valid_ip "$new_peer_ip"; then
+								sed -i "/^Address =/c\Address = $new_peer_ip" /etc/wireguard/wg0.conf
+                                echo "The IP has been changed. Restarting Wireguard..." \
+                                && systemctl restart wg-quick@wg0.service
+								break
+                            else
+                                echo "IP is not valid. Please try again."
+                            fi
+                        done
                     ;;
                     2)
                         # Edit the Public Key of the Remote Wireguard server this Peer is connecting to.
                         while true; do
+                            echo -e "\nHere is the Public Key for the Remote Wireguard Server:"
+                            grep '^PublicKey' /etc/wireguard/wg0.conf
                             read -p $'Please enter the Public Key you would like to use\n: ' new_peer_public_key
 							# change the public key
 							if key_check "$new_peer_public_key"; then
@@ -523,7 +543,7 @@ EOF
                         while true; do
                             echo -e "\nHere is a list of the networks that are allowed for this Peer (0.0.0.0/0 is default and means a full tunnel connection):"
                             grep '^AllowedIPs' /etc/wireguard/wg0.conf
-                            read -p $'\n1. Change the IP network of AllowedIPs (This option reverts back to a single IP string allowed. Use 0.0.0.0/0 to full tunnel)\n2. Append a new IP to end of the AllowedIP list\n: ' allowed_input
+                            read -p $'\n1. Change the network of AllowedIPs (This option reverts back to a single IP network allowed. Use 0.0.0.0/0 to full tunnel)\n2. Append a new network to end of the AllowedIP list\n3. Exit to the previous menu\n: ' allowed_input
                             case "$allowed_input" in
                                 1)
                                     # Change the IP
@@ -539,12 +559,30 @@ EOF
                                     while true; do
                                         read -p $'Enter the CIDR notation (like /24 or /0)\n: ' allowed_cidr_input
                                         if cidr_check "$allowed_cidr_input"; then
-                                            sed -i "/^AllowedIPs/s|$|/$allowed_cidr_input|" /etc/wireguard/wg0.conf
+                                            sed -i "/^AllowedIPs/s|$|/$allowed_cidr_input|" /etc/wireguard/wg0.conf \
+                                            && systemctl restart wg-quick@wg0.service
                                             break
                                         else
                                             echo "not a valid input. Please try again."
                                         fi
                                     done
+                                ;;
+                                2)
+                                    # Append a new Allowed network.
+                                    while true; do
+                                        read -p $'Enter the IP network you would like to use\n: ' allowed_ip_input2
+                                        if cidr_check "$allowed_cidr_input2"; then
+                                            sed -i "/^AllowedIPs/s|$|/$allowed_cidr_input2|" /etc/wireguard/wg0.conf \
+                                            && systemctl restart wg-quick@wg0.service
+                                            break
+                                        else
+                                            echo "not a valid input. Please try again."
+                                        fi
+                                    done
+                                ;;
+                                3)
+                                    # Exit the menu
+                                    break
                                 ;;
                             esac
                         done
@@ -552,32 +590,54 @@ EOF
                     4)
                         # Edit the WAN of the remote Wireguard server this Peer is connecting to
                         while true; do
-                            read -p $'Please enter the new IP you would like to use\n: ' remote_wan
-							# change the ip
-							if is_valid_ip "$new_ip"; then
-                                sed -i "/# $user_select2/,/^\[Peer\]/ { s/^AllowedIPs =.*/AllowedIPs = ${new_ip}\/32/ }" /etc/wireguard/wg0.conf
-								echo "The IP has been changed. Restarting Wireguard..." \
-                                && systemctl restart wg-quick@wg0.service
-								break
-                            else
-                                echo "IP is not valid. Please try again."
-                            fi
+                            echo -e "\nHere is the WAN IP and port of the remote Wireguard server this peer connects to:"
+                            grep '^EndPoint' /etc/wireguard/wg0.conf
+							read -p $'\n1. Change the WAN IP (This is the IP used to communicate to the remote Wireguard Server)\n2. Change the port\n3. Exit to the previous menu\n: ' wan_peer_input
+                            case "$wan_peer_input" in
+							    1)
+                                    # Change the WAN for connection.
+                                    while true; do
+                                        read -p $'Enter the WAN IP for this peer to connect to\n: ' wan_peer_change
+                                        if is_valid_ip "$wan_peer_change"; then
+                                            sed -i -E "s/(EndPoint = )[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(:[0-9]+)/\1$wan_peer_change\2/" /etc/wireguard/wg0.conf
+								            echo "The IP has been changed. Restarting Wireguard..." \
+                                            && systemctl restart wg-quick@wg0.service
+								            break
+                                        else
+                                            echo "IP is not valid. Please try again."
+                                        fi
+                                    done
+                                ;;
+                                2)
+                                    # Change the port.
+                                    while true; do
+                                        read -p $'Enter the new port number of the remote Wireguard Server\n: ' port_peer_change
+                                        if port_num_check "$port_peer_change"; then
+                                            sed -i -E "s/(EndPoint = [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:)[0-9]+/\1$port_peer_change/" /etc/wireguard/wg0.conf
+                                            echo "The port has been changed. Restarting Wireguard..." \
+                                            && systemctl restart wg-quick@wg0.service
+								            break
+                                        else
+                                            echo "Port is not valid. Please try again."
+                                        fi
+                                    done
+                                ;;
+                                3)
+                                    # exit to the previous menu
+                                    break
+                                ;;
+                            esac
                         done
                     ;;
-                    5)
-                        # Edit the port
-                    ;;
                     *)
-                        echo "Not a valid Option. Please try again.
+                        echo "Not a valid Option. Please try again."
                     ;;
-                    Exit)
+                    5)
                         # Goes back to the main menu
                         break
                     ;;
                 esac
             done
-
-
         ;;
         exit)
             echo "The script will now exit."
