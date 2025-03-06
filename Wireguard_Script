@@ -68,7 +68,7 @@ port_num_check() {
 # Start of the Script with options.
 while true; do
     # Input from user
-    read -p $'\nChoose the install type:\n\n1. (OPTIONAL) Set Static IP\n2. Wireguard Server Setup\n3. Wireguard Server Peer Config\n4. Client Peer Setup\nType "exit" to exit the script: ' install_type
+    read -p $'\nChoose the install type:\n\n1. (OPTIONAL) Set Static IP\n2. Wireguard Server Setup\n3. Wireguard Server Peer Config\n4. Client Peer Setup\n5. Client Peer Config\nType "exit" to exit the script: ' install_type
     case "$install_type" in
         1) 
 			# Static IP configuration
@@ -341,7 +341,7 @@ EOF
                                     read -p $'Please enter the Public Key you would like to use\n: ' new_public_key
 								    # change the public key
 								    if key_check "$new_public_key"; then
-                                        sed -i "/^PublicKey =/c\PublicKey = $new_public_key" /etc/wireguard/wg0.conf
+                                        sed -i "/# $user_select2/,/^\[Peer\]/ { s/^PublicKey =.*/PublicKey = ${new_public_key} }" /etc/wireguard/wg0.conf
 								        echo "Public Key has been changed. Restarting Wireguard..." \
                                         && systemctl restart wg-quick@wg0.service
 								        break
@@ -470,6 +470,86 @@ EOF
             && systemctl daemon-reload \
             && systemctl start wg-quick@wg0 \
             && echo "The Client Peer setup has been completed!"
+
+            # print the public key for the user to use in the Peer option for the remote server.
+	        echo -e "\nPrinting the Public key\n\n$public_key\n\n"
+	        echo "Please copy this key to use for setting up a Peer on the Remote Wireguard Server."
+	        echo "The Wireguard Client Peer installation has been completed!"
+        ;;
+        5)
+            # Edit the Client Peer Configuration file.
+			if [ -f /etc/wireguard/wg0.conf ]; then
+			    continue
+            else
+                echo "Wireguard config file not found, please run either the Wireguard Server or Wireguard Peer setup."
+                break
+            fi
+
+            while true; do
+                read -p $'Choose which option you'd like to edit\n1. Edit this Peer's Address\n2. Edit the remote WG server's Public Key\n3. Edit Allowed IP's\n4. Edit the Endpoint's IP. (Remote WG Server's WAN)\n5. Edit the port of the remote WG Server\nType \"Exit\" to go back to the main menu\n: ' client_input
+                case "$client_input" in
+                    1)
+                        # Edit the IP Address
+                            while true; do
+                                    read -p $'Please enter the new IP you would like to use\n: ' new_peer_ip
+								    # change the ip
+								    if is_valid_ip "$new_peer_ip"; then
+								        sed -i "/^Address =/c\Address = "$new_peer_ip"" /etc/wireguard/wg0.conf
+                                        echo "The IP has been changed. Restarting Wireguard..." \
+                                        && systemctl restart wg-quick@wg0.service
+								        break
+                                    else
+                                        echo "IP is not valid. Please try again."
+                                    fi
+                                done
+                    ;;
+                    2)
+                        # Edit the Public Key of the Remote Wireguard server this Peer is connecting to.
+                        while true; do
+                            read -p $'Please enter the Public Key you would like to use\n: ' new_peer_public_key
+							# change the public key
+							if key_check "$new_peer_public_key"; then
+                                sed -i "/^PublicKey =/c\PublicKey = $new_peer_public_key" /etc/wireguard/wg0.conf
+								echo "Public Key has been changed. Restarting Wireguard..." \
+                                && systemctl restart wg-quick@wg0.service
+								break
+                            else
+                                echo "Key is not a valid key. Please try again."
+                            fi
+                        done
+                    ;;
+                    3)
+                        # Edit Allowed IP's
+                        
+                    ;;
+                    4)
+                        # Edit the WAN of the remote Wireguard server this Peer is connecting to
+                        while true; do
+                            read -p $'Please enter the new IP you would like to use\n: ' remote_wan
+							# change the ip
+							if is_valid_ip "$new_ip"; then
+                                sed -i "/# $user_select2/,/^\[Peer\]/ { s/^AllowedIPs =.*/AllowedIPs = ${new_ip}\/32/ }" /etc/wireguard/wg0.conf
+								echo "The IP has been changed. Restarting Wireguard..." \
+                                && systemctl restart wg-quick@wg0.service
+								break
+                            else
+                                echo "IP is not valid. Please try again."
+                            fi
+                        done
+                    ;;
+                    5)
+                        # Edit the port
+                    ;;
+                    *)
+                        echo "Not a valid Option. Please try again.
+                    ;;
+                    Exit)
+                        # Goes back to the main menu
+                        break
+                    ;;
+                esac
+            done
+
 
         ;;
         exit)
