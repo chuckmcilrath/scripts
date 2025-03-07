@@ -68,7 +68,7 @@ port_num_check() {
 # Start of the Script with options.
 while true; do
     # Input from user
-    read -p $'\nChoose the install type:\n\n1. (OPTIONAL) Set Static IP\n2. Wireguard Server Setup\n3. Wireguard Server Peer Config\n4. Client Peer Setup\n5. Client Peer Config\nType "exit" to exit the script\n: ' install_type
+    read -p $'\nChoose the install type:\n\n1. (OPTIONAL) Set Static IP\n2. Wireguard Server Setup\n3. Wireguard Server Peer Config\n4. Client Peer Setup\n5. Client Peer Config\n7. Delete and cleanup\nType "exit" to exit the script\n: ' install_type
     case "$install_type" in
         1) 
 			# Static IP configuration
@@ -454,7 +454,7 @@ EOF
             done
 
             while true; do
-                read -p $'Please enter the AllowedIPs (0.0.0.0 is full tunnel)\n: ' allowed_ips_peer
+                read -p $'Please enter the Allowed Network (0.0.0.0 is full tunnel)\n: ' allowed_ips_peer
                 if is_valid_ip "$allowed_ips_peer"; then
                     break
                 else
@@ -681,6 +681,23 @@ EOF
                 esac
             done
         ;;
+	    7)
+        while true; do
+            echo -e "\n **WARNING** THIS WILL UNINSTALL AND REMOVE THE WIREGUARD CONFIGURATION"
+            read -p $'\nAre you sure you want to proceed with the cleanup? (y/n)\n: ' cleanup_input
+            if [[ $cleanup_input == y ]]; then
+                apt remove wireguard -y \
+                && rm -f /etc/wireguard/wg0.conf
+                echo "Wireguard and it's configuration have been removed."
+                break
+            elif [[ $cleanup_input == n ]]; then
+                echo "Cleanup canceled."
+                break
+            else
+                echo "Invalid input. Please enter 'y' or 'n'."
+            fi
+        done
+	    ;;
         exit)
             echo "The script will now exit."
             break
