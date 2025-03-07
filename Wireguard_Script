@@ -160,11 +160,9 @@ while true; do
             ;;
         2)
             # Checks to see if the config file is already there, if it is, it will break.
-			if [ ! -f /etc/wireguard/wg0.conf ]; then
-                :
-            else
+			if [ -f /etc/wireguard/wg0.conf ]; then
                 echo " **WARNING** Wireguard config found, please run the cleanup option if you need to reinstall."
-                break
+                continue
             fi
 
             # Wireguard Server Install and Setup
@@ -173,8 +171,8 @@ while true; do
             apt update &> /dev/null && apt upgrade -y &> /dev/null
             echo "apt update and apt upgrade have completed."
 
-	    # looks for and installs systemd-resolved
-	    check_install "systemd-resolved"
+	        # looks for and installs systemd-resolved
+	        check_install "systemd-resolved"
 
             # Loop until valid input
             while true; do
@@ -410,7 +408,7 @@ EOF
                 :
             else
                 echo " **WARNING** Wireguard config found, please run the cleanup option if you need to reinstall."
-                break
+                continue
             fi
 
             # Client Peer Setup
@@ -525,15 +523,14 @@ EOF
             # Client Peer Config
             while true; do
                 # Edit the Client Peer Configuration file.
-			    if [ -f /etc/wireguard/wg0.conf ]; then
-			        :
-                else
+			    if [ ! -f /etc/wireguard/wg0.conf ]; then
                     echo " **WARNING** Wireguard config file not found, please run either the Wireguard Server or Wireguard Peer setup."
                     break
                 fi
 
                 if grep -q '^PreUp' /etc/wireguard/wg0.conf; then
                     echo -e "\n **WARNING** This config file is set up to be a Server. Please run the \"Server\" Setup option instead."
+                    break
                 fi
 
                 read -p $'\nChoose which option you would like to edit\n\n1. Edit the peer address\n2. Edit the remote Wireguard Public Key\n3. Edit Allowed IPs\n4. Edit the IP and port of the EndPoint. (Remote WG WAN and port)\n5. Exit to the previous menu\n: ' client_input
