@@ -602,9 +602,9 @@ EOF
                                 2)
                                     # Append a new Allowed network.
                                     while true; do
-                                        read -p $'Enter the IP network you would like to use\n: ' allowed_ip_input2
+                                        read -p $'Enter the IP network you would like for Wireguard to be able to access\n: ' allowed_ip_input2
                                         if is_valid_ip "$allowed_ip_input2"; then
-                                            sed -i "/^AllowedIPs/s|$|,$allowed_ip_input2|" /etc/wireguard/wg0.conf \
+                                            sed -i "/^AllowedIPs/s|$|, $allowed_ip_input2|" /etc/wireguard/wg0.conf \
                                             && systemctl restart wg-quick@wg0.service
                                             echo "Allowed Network has been updated and the Wireguard service has been restarted."
                                             break
@@ -613,7 +613,7 @@ EOF
                                         fi
                                     done
                                     while true; do
-                                        read -p $'Enter the CIDR notation (like /24 or /0)\n: ' allowed_cidr_input2
+                                        read -p $'Enter the CIDR notation for that network (like /24 or /0)\n: ' allowed_cidr_input2
                                         if cidr_check "$allowed_cidr_input2"; then
                                             sed -i "/^AllowedIPs/s|$|/$allowed_cidr_input2|" /etc/wireguard/wg0.conf \
                                             && systemctl restart wg-quick@wg0.service
