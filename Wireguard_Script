@@ -512,17 +512,17 @@ EndPoint = $wan_address:$port_num
 EOF
 	        fi
 
-            echo "Starting the Wireguard Service..."
+            # print the public key for the user to use in the Peer option for the remote server.
+	        echo -e "\nPrinting the Public key\n\n$public_key\n\n"
+	        echo "Please copy this key to use for setting up a Peer on the Remote Wireguard Server."
+            echo "Starting the Wireguard Service... If you have set up a full tunnel, you will lose connection."
             # Enables the Wg0 as a service to start on boot.
             systemctl enable wg-quick@wg0.service \
             && systemctl daemon-reload \
             && systemctl start wg-quick@wg0 \
             && echo "The Client Peer setup has been completed!"
 
-            # print the public key for the user to use in the Peer option for the remote server.
-	        echo -e "\nPrinting the Public key\n\n$public_key\n\n"
-	        echo "Please copy this key to use for setting up a Peer on the Remote Wireguard Server."
-	        echo "The Wireguard Client Peer installation has been completed!"
+            
         ;;
         5)
             # Client Peer Config
