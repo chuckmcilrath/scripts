@@ -29,8 +29,8 @@ sed -Ezi.bak "s/(function\(orig_cmd\) \{)/\1\n\torig_cmd\(\);\n\treturn;/g" \
 /usr/share/javascript/proxmox-widget-toolkit/proxmoxlib.js
 
 sed -i "1a email_from: proxmox@$domain_email" /etc/pve/datacenter.cfg
-sed -i '/content/!b;/images/b;s/$/,images/' /etc/pve/storage.cfg
-sed -i '/^lvmthin: local-lvm/,+3 d' /etc/pve/storage.cfg
+#sed -i '/content/!b;/images/b;s/$/,images/' /etc/pve/storage.cfg
+#sed -i '/^lvmthin: local-lvm/,+3 d' /etc/pve/storage.cfg
 
 #Install Fail2ban
 if ! which fail2ban-client &> /dev/null
