@@ -81,6 +81,3 @@ sed -i '/^\[DEFAULT\]/a\allowipv6 = no' $f2b_local
 
 #restart fail2ban to apply changes.
 systemctl restart fail2ban
-
-#Update and upgrade as well as add ntfs support.
-apt upgrade -y && apt install ntfs-3g -y
