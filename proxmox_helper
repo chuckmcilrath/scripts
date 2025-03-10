@@ -81,3 +81,6 @@ sed -i '/^\[DEFAULT\]/a\allowipv6 = no' $f2b_local
 
 #restart fail2ban to apply changes.
 systemctl restart fail2ban
+
+#restart the pveproxy service to apply the change to the nagging pop up.
+systemctl restart pveproxy
