@@ -423,7 +423,7 @@ EOF
             echo "apt update and apt upgrade have completed."
 
             # Checks on wireguard being installed. 
-            check_install "wireguard"
+            check_install "wg"
 
 	        # checks to see if the private and public keys are generated.
 	        if [ ! -f /etc/wireguard/private.key ]; then
