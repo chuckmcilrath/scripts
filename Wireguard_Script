@@ -88,7 +88,8 @@ while true; do
                 read -p $'Input the static IP you would like the Wireguard Server to use. (e.g. 192.168.1.2)\n: ' static_ip
                 if is_valid_ip "$static_ip"; then
                     while true; do
-                        read -p $'Are you sure you want to use "$static_ip"? y/n\n: ' static_confirm
+                        echo -e "Are you sure you want to use $static_ip? y/n\n: "
+			            read static_confirm
                         if [[ $static_confirm == y ]]; then
                             if grep -q address $net_int; then
                                 sed -i "/address/c\        address "$static_ip" " $net_int \
@@ -115,7 +116,8 @@ while true; do
                 read -p $'Enter the subnet in CIDR notation. (e.g. 24)\n: ' cidr_input
                 if cidr_check "$cidr_input"; then
                     while true; do
-                        read -p $'Are you sure you want to use "$cidr_input"? y/n\n: ' cidr_confirm
+                        echo -e "Are you sure you want to use $cidr_input? y/n\n: "
+			            read cidr_confirm
                         if [[ $cidr_confirm == y ]]; then
                             if grep -q "$static_ip" $net_int; then
                                 sed -i "/"$static_ip"/c\        address "$static_ip"\/"$cidr_input" " $net_int \
@@ -141,7 +143,8 @@ while true; do
                 read -p $'Input the gateway\n: ' static_gw
                 if is_valid_ip "$static_gw"; then
                     while true; do
-                        read -p $'Are you sure you want to use "$static_gw"? y/n\n: ' static_gw_confirm
+                        echo -e "Are you sure you want to use $static_gw? y/n\n: "
+                        read static_gw_confirm
                         if [[ $static_gw_confirm = y ]]; then
                             if grep -q address $net_int; then
                                 sed -i "/gateway/c\        gateway "$static_gw" " $net_int \
