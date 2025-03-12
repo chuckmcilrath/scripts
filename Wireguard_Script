@@ -33,10 +33,10 @@ cidr_check() {
 check_install() {
     local install_name="$1"
 	echo "looking for $install_name..."
-    	if ! dpkg -l | grep -qw "$install_name"; then
+    	if ! command -v "$install_name" &> /dev/null; then
 	    echo "Installing $install_name..."
 	    apt install $install_name -y &> /dev/null
-	    if dpkg -l | grep -qw "$install_name"; then
+	    if command -v "$install_name" &> /dev/null; then
 		echo "$install_name has been successfully installed."
 	    else
 		echo "Installation failed. Please clear the error and try again."
