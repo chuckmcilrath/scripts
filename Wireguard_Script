@@ -487,11 +487,11 @@ EOF
             done
 
             while true; do
-                read -p $'Please enter the WAN Address of the Wireguard Server this Peer is connecting to\n: ' wan_address
-                if is_valid_ip "$wan_address"; then
+                read -p $'Please enter the Endpoint IP of the Wireguard Server this Peer is connecting to (WAN for outside peers)\n: ' endpoint_address
+                if is_valid_ip "$endpoint_address"; then
                     break
                 else
-                    echo "The WAN address is not a valid address. Please try again."
+                    echo "The Endpoint address is not a valid address. Please try again."
                 fi
             done
 
@@ -528,8 +528,6 @@ EOF
             && systemctl daemon-reload \
             && systemctl start wg-quick@wg0 \
             && echo "The Client Peer setup has been completed!"
-
-            
         ;;
         5)
             # Client Peer Config
@@ -697,25 +695,25 @@ EOF
             done
         ;;
 	    7)
-        while true; do
-            echo -e "\n **WARNING** THIS WILL UNINSTALL AND REMOVE THE WIREGUARD CONFIGURATION"
-            read -p $'\nAre you sure you want to proceed with the cleanup? (y/n)\n: ' cleanup_input
-            if [[ $cleanup_input == y ]]; then
-                apt-get remove --purge wireguard wireguard-tools -y
-                rm -f /etc/wireguard/wg0.conf
-                rm -f /etc/wireguard/public.key
-                rm -f /etc/wireguard/private.key
-                unset public_key
-                unset private_key
-                echo -e "\nWireguard and it's configuration have been removed."
-                break
-            elif [[ $cleanup_input == n ]]; then
-                echo "Cleanup canceled."
-                break
-            else
-                echo "Invalid input. Please enter 'y' or 'n'."
-            fi
-        done
+            while true; do
+                echo -e "\n **WARNING** THIS WILL UNINSTALL AND REMOVE THE WIREGUARD CONFIGURATION"
+                read -p $'\nAre you sure you want to proceed with the cleanup? (y/n)\n: ' cleanup_input
+                if [[ $cleanup_input == y ]]; then
+                    apt-get remove --purge wireguard wireguard-tools -y
+                    rm -f /etc/wireguard/wg0.conf
+                    rm -f /etc/wireguard/public.key
+                    rm -f /etc/wireguard/private.key
+                    unset public_key
+                    unset private_key
+                    echo -e "\nWireguard and it's configuration have been removed."
+                    break
+                elif [[ $cleanup_input == n ]]; then
+                    echo "Cleanup canceled."
+                    break
+                else
+                    echo "Invalid input. Please enter 'y' or 'n'."
+                fi
+            done
 	    ;;
         exit)
             echo "The script will now exit."
