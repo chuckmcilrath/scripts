@@ -257,6 +257,12 @@ EOF
 	    # Start of the config for peers for the Server
 	    
 	    while true; do
+
+            if [ ! -f /etc/wireguard/wg0.conf ]; then
+                    echo " **WARNING** Wireguard config file not found, please run either the Wireguard Server or Wireguard Peer setup."
+                    break
+            fi
+
             if grep -q '^EndPoint' /etc/wireguard/wg0.conf; then
                 echo -e "\n **WARNING** This config file is set up to be a Peer. Please run the \"Client Peer Config\" option instead."
                 break
