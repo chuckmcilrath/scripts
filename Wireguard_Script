@@ -88,8 +88,8 @@ while true; do
                 read -p $'Input the static IP you would like the Wireguard Server to use. (e.g. 192.168.1.2)\n: ' static_ip
                 if is_valid_ip "$static_ip"; then
                     while true; do
-                        echo -e "Are you sure you want to use $static_ip? (y/n)\n: "
-			            read static_confirm
+                        echo "Are you sure you want to use $static_ip? (y/n)"
+			            read -p ": " static_confirm
                         if [[ $static_confirm == y ]]; then
                             if grep -q address $net_int; then
                                 sed -i "/address/c\        address "$static_ip" " $net_int \
