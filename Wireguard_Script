@@ -700,7 +700,7 @@ EOF
             echo -e "\n **WARNING** THIS WILL UNINSTALL AND REMOVE THE WIREGUARD CONFIGURATION"
             read -p $'\nAre you sure you want to proceed with the cleanup? (y/n)\n: ' cleanup_input
             if [[ $cleanup_input == y ]]; then
-                apt remove wireguard -y
+                apt-get remove --purge wireguard wireguard-tools -y
                 rm -f /etc/wireguard/wg0.conf
                 rm -f /etc/wireguard/public.key
                 rm -f /etc/wireguard/private.key
