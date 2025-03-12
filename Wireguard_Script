@@ -10,23 +10,23 @@ is_valid_ip() {
     local IFS='.'
     local -a octets=($ip)
 
-        [[ "${octets[0]}" -eq 127 ]] && return 1
-        [[ ${#octets[@]} -ne 4 ]] && return 1
+    [[ "${octets[0]}" -eq 127 ]] && return 1
+    [[ ${#octets[@]} -ne 4 ]] && return 1
 
-        # Check each octet is between 0 and 255
-        for octet in "${octets[@]}"; do
-            [[ ! "$octet" =~ ^[0-9]+$ ]] && return 1
-            ((octet < 0 || octet > 255)) && return 1
-        done
+    # Check each octet is between 0 and 255
+    for octet in "${octets[@]}"; do
+        [[ ! "$octet" =~ ^[0-9]+$ ]] && return 1
+        ((octet < 0 || octet > 255)) && return 1
+    done
 
-        return 0  # IP is valid
-    }
+    return 0  # IP is valid
+}
 
 #Function to check the user's CIDR input to make sure it's within 0-32.
 cidr_check() {
     local cidr=$1
-        [[ $cidr =~ ^[0-9]+$ ]] || return 1
-	((cidr >= 0 && cidr <= 32))
+    [[ $cidr =~ ^[0-9]+$ ]] || return 1
+    ((cidr >= 0 && cidr <= 32))
 }
 
 # Function to check installs of important apps.
@@ -79,8 +79,6 @@ while true; do
             if grep -q dhcp $net_int; then
                 sed -i 's/dhcp/static/' $net_int \
                 && echo -e "        address\n        gateway" >> $net_int
-            else
-                :
             fi
 
             # Edits the IP
@@ -203,35 +201,35 @@ while true; do
             done
 
             # looks for and installs the rest of the needed applications
-	    check_install "iptables"
-	    check_install "openssh-client"
-	    check_install "openssh-server"
-	    check_install "openssh-sftp-server"
-	    check_install "wireguard"
+	        check_install "iptables"
+	        check_install "openssh-client"
+	        check_install "openssh-server"
+	        check_install "openssh-sftp-server"
+	        check_install "wireguard"
 
-	    # checks to see if the private and public keys are generated.
-	    if [ ! -f /etc/wireguard/private.key ]; then
-		umask 077 && wg genkey > /etc/wireguard/private.key
-	    fi
+	        # checks to see if the private and public keys are generated.
+	        if [ ! -f /etc/wireguard/private.key ]; then
+		    umask 077 && wg genkey > /etc/wireguard/private.key
+	        fi
 
-	    if [ ! -f /etc/wireguard/public.key ]; then
-		wg pubkey < /etc/wireguard/private.key > /etc/wireguard/public.key
-	    fi
+	        if [ ! -f /etc/wireguard/public.key ]; then
+		    wg pubkey < /etc/wireguard/private.key > /etc/wireguard/public.key
+	        fi
 
-	    # stores the private and public keys in variables for later use.
-	    private_key=$(cat /etc/wireguard/private.key)
-	    public_key=$(cat /etc/wireguard/public.key)
+	        # stores the private and public keys in variables for later use.
+	        private_key=$(cat /etc/wireguard/private.key)
+	        public_key=$(cat /etc/wireguard/public.key)
 
-	    # Exports the varibles to be used ouside of the script
-	    echo "export private_key=$private_key" >> ~/.bashrc
-	    echo "export public_key=$public_key" >> ~/.bashrc
+	        # Exports the varibles to be used ouside of the script
+	        echo "export private_key=$private_key" >> ~/.bashrc
+	        echo "export public_key=$public_key" >> ~/.bashrc
 
-	    # sets variable for the interface being used.
-	    interf=$(grep '^\s*iface\s\+\w\+\s\+inet\s\+static' /etc/network/interfaces | awk '{print $2}')
+	        # sets variable for the interface being used.
+	        interf=$(grep '^\s*iface\s\+\w\+\s\+inet\s\+static' /etc/network/interfaces | awk '{print $2}')
 
-	    # Checks and makes the config folder
-	    if [ ! -f /etc/wireguard/wg0.conf ]; then
-		cat <<EOF > /etc/wireguard/wg0.conf
+	        # Checks and makes the config folder
+	        if [ ! -f /etc/wireguard/wg0.conf ]; then
+		    cat <<EOF > /etc/wireguard/wg0.conf
 [Interface]
 PrivateKey = $private_key
 Address = 10.15.0.1/32
@@ -244,32 +242,32 @@ PreUp = sysctl -w net.ipv4.ip_forward=1
 PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o $interf -j MASQUERADE
 PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o $interf -j MASQUERADE
 EOF
-	    fi
+	        fi
 
-        # Enables the Wg0 as a service to start on boot.
-        systemctl enable wg-quick@wg0.service \
-        && systemctl daemon-reload \
-        && systemctl start wg-quick@wg0
+            # Enables the Wg0 as a service to start on boot.
+            systemctl enable wg-quick@wg0.service \
+            && systemctl daemon-reload \
+            && systemctl start wg-quick@wg0
 
-	    # print the public key for the user to use in clients.
-	    echo -e "\nPrinting the Public key\n\n$public_key\n\n"
-	    echo "Please copy this key to use for setting up the client"
-	    echo "The Wireguard Server installation has been completed!"
-            ;;
+	        # print the public key for the user to use in clients.
+	        echo -e "\nPrinting the Public key\n\n$public_key\n\n"
+	        echo "Please copy this key to use for setting up the client"
+	        echo "The Wireguard Server installation has been completed!"
+        ;;
         3)
-	    # Start of the config for peers for the Server
+	        # Start of the config for peers for the Server
 	    
-	    while true; do
+	        while true; do
 
-            if [ ! -f /etc/wireguard/wg0.conf ]; then
+                if [ ! -f /etc/wireguard/wg0.conf ]; then
                     echo " **WARNING** Wireguard config file not found, please run either the Wireguard Server or Wireguard Peer setup."
                     break
-            fi
+                fi
 
-            if grep -q '^EndPoint' /etc/wireguard/wg0.conf; then
-                echo -e "\n **WARNING** This config file is set up to be a Peer. Please run the \"Client Peer Config\" option instead."
-                break
-            fi
+                if grep -q '^EndPoint' /etc/wireguard/wg0.conf; then
+                    echo -e "\n **WARNING** This config file is set up to be a Peer. Please run the \"Client Peer Config\" option instead."
+                    break
+                fi
 
             # Displays the users before selection.
             echo -e "\nHere are the list of Peers currently configured:\n"
@@ -278,51 +276,51 @@ EOF
             # Starts the selection
             echo -e "\nServer Peer Configuration"
 	        read -p $'\n1. Add a new Peer.\n2. Remove a Peer.\n3. Edit a Peer.\n4. Exit back to the main menu\n: ' peer_choice
-		case "$peer_choice" in
-		    1)
-				# Add a Peer
+		    case "$peer_choice" in
+		        1)
+				    # Add a Peer
 
-				# List the peers
-			    if [ -f /etc/wireguard/wg0.conf ]; then
-			        echo -e "\nHere are the list of Peers currently configured:\n"
-                    awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
-                    read -p $'\nEnter a name for the peer\n: ' peer_name
-                else
-                    echo "Wireguard config file not found, please run either the Wireguard Server or Wireguard Peer setup."
-                    break
-                fi
-                
-                
-				# User input
-                while true; do
-                    read -p $'Enter the IP for the peer to use\n: ' peer_ip
-				    if ! is_valid_ip "$peer_ip"; then
-					    echo "'$peer_ip' is not a valid IP Address."
+				    # List the peers
+			        if [ -f /etc/wireguard/wg0.conf ]; then
+			            echo -e "\nHere are the list of Peers currently configured:\n"
+                        awk -F' = |# ' '/#/{name=$2} /AllowedIPs/{print name, $2}' /etc/wireguard/wg0.conf
+                        read -p $'\nEnter a name for the peer\n: ' peer_name
                     else
+                        echo "Wireguard config file not found, please run either the Wireguard Server or Wireguard Peer setup."
                         break
-				    fi
-                done
+                    fi
+                
+                
+				    # User input
+                    while true; do
+                        read -p $'Enter the IP for the peer to use\n: ' peer_ip
+				        if ! is_valid_ip "$peer_ip"; then
+					        echo "'$peer_ip' is not a valid IP Address."
+                        else
+                            break
+				        fi
+                    done
 
-                while true; do
-                    read -p $'Enter the public key from the client peer\n: ' peer_key
-				    if ! key_check "$peer_key"; then
-			    	    echo "'$peer_key' is not a valid public key."
-                    else
-                        break
-				    fi
-                done
+                    while true; do
+                        read -p $'Enter the public key from the client peer\n: ' peer_key
+				        if ! key_check "$peer_key"; then
+			    	        echo "'$peer_key' is not a valid public key."
+                        else
+                            break
+				        fi
+                    done
                 
-                while true; do
-                    if [ -f /etc/wireguard/wg0.conf ]; then
+                    while true; do
+                        if [ -f /etc/wireguard/wg0.conf ]; then
 			    	    cat <<EOF >> /etc/wireguard/wg0.conf
 [Peer]
 # $peer_name
 PublicKey = $peer_key
 AllowedIPs = $peer_ip/32
 EOF
-			    	echo "Peer added successfully. Restarting Wireguard..." \
-                    && systemctl restart wg-quick@wg0.service
-                    break
+			    	    echo "Peer added successfully. Restarting Wireguard..." \
+                        && systemctl restart wg-quick@wg0.service
+                        break
 				    fi
                 done
 			;;
