@@ -705,7 +705,7 @@ EOF
                 read -p ": " help_input
 
                 # Start of menu
-                case "$help_input" in;
+                case "$help_input" in
                     1)
                         # Wireguard command to print connections and public key
                         wg
@@ -722,8 +722,8 @@ systemctl start wg-quick@wg0 (Starts the Wireguard service)
 systemctl stop wg-quick@wg0 (Stops the Wireguard service)
 systemctl restart wg-quick@wg0 (Restarts the Wireguard service)
 nano /etc/wireguard/wg0.conf (Edits the config file)
-cat /etc/wireguard/public.key or echo $public_key (Prints the Publc Key of the server)
-cat /etc/wireguard/private.key or echo $private_key (Prints the Private Key of the server)
+cat /etc/wireguard/public.key or echo \$public_key (Prints the Publc Key of the server)
+cat /etc/wireguard/private.key or echo \$private_key (Prints the Private Key of the server)
 EOF
 )
 
