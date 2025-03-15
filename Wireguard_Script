@@ -515,7 +515,7 @@ Address = $peer_address/32
 # Wireguard VM server on local Proxmox
 PublicKey = $peer_pk
 AllowedIPs = $allowed_ips_peer/$allowed_ip_cidr
-EndPoint = $wan_address:$port_num
+EndPoint = $endpoint_address:$port_num
 EOF
 	        fi
 
