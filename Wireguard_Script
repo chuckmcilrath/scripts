@@ -68,7 +68,7 @@ port_num_check() {
 # Start of the Script with options.
 while true; do
     # Input from user
-    read -p $'\nChoose the install type:\n\n1. (OPTIONAL) Set Static IP\n2. Wireguard Server Setup\n3. Wireguard Server Peer Config\n4. Client Peer Setup\n5. Client Peer Config\n7. Delete and cleanup\nType "exit" to exit the script\n: ' install_type
+    read -p $'\nChoose the install type:\n\n1. (OPTIONAL) Set Static IP\n2. Wireguard Server Install and Setup\n3. Wireguard Server Peer Config\n4. Client Peer Install and Setup\n5. Client Peer Config\n6. Troubleshooting and help\n7. Delete and cleanup\nType "exit" to exit the script\n: ' install_type
     case "$install_type" in
         1)
 			# Static IP configuration
