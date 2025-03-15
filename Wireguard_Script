@@ -643,14 +643,14 @@ EOF
                         done
                     ;;
                     4)
-                        # Edit the WAN of the remote Wireguard server this Peer is connecting to
+                        # Edit the Endpoint of the remote Wireguard server this Peer is connecting to
                         while true; do
-                            echo -e "\nHere is the WAN IP and port of the remote Wireguard Server this peer connects to:"
+                            echo -e "\nHere is the Endpont IP and port of the remote Wireguard Server this peer connects to:"
                             grep '^EndPoint' /etc/wireguard/wg0.conf
-							read -p $'\n1. Change the Remote WG Server IP (This is the IP used to communicate to the remote Wireguard Server)\n2. Change the port\n3. Exit to the previous menu\n: ' wan_peer_input
+							read -p $'\n1. Change the Remote Endpoint IP (This is the IP used to communicate to the remote Wireguard Server)\n2. Change the port\n3. Exit to the previous menu\n: ' wan_peer_input
                             case "$wan_peer_input" in
 							    1)
-                                    # Change the WAN for connection.
+                                    # Change the Endpoint for connection.
                                     while true; do
                                         read -p $'Enter the Remote Server IP for this peer to connect to\n: ' wan_peer_change
                                         if is_valid_ip "$wan_peer_change"; then
