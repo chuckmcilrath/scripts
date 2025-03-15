@@ -733,6 +733,9 @@ printf '%s\n' "$commands_text"
                         # Exits this loop
                         break
                     ;;
+                    *)
+                        echo "Not a valid option. Please try again."
+                    ;;
                 esac
             done
         ;;
