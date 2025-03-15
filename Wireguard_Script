@@ -697,7 +697,7 @@ EOF
         6)
             # Troubleshooting and Help.
             while true; do
-                echo "Troubleshooting and help. Choose an option:"
+                echo -e "\nTroubleshooting and help. Choose an option:"
                 echo "1. wg (Command to see peers and public key"
                 echo "2. Print out the configuration file"
                 echo "3. Useful Commands"
@@ -717,6 +717,8 @@ EOF
                     3)
                         # Prints Useful Commands
                         commands_text=$(cat <<EOF
+
+
 wg (Command for Wireguard to print connections and public key of server)
 systemctl start wg-quick@wg0 (Starts the Wireguard service)
 systemctl stop wg-quick@wg0 (Stops the Wireguard service)
@@ -724,6 +726,8 @@ systemctl restart wg-quick@wg0 (Restarts the Wireguard service)
 nano /etc/wireguard/wg0.conf (Edits the config file)
 cat /etc/wireguard/public.key or echo \$public_key (Prints the Publc Key of the server)
 cat /etc/wireguard/private.key or echo \$private_key (Prints the Private Key of the server)
+
+
 EOF
 )
 
