@@ -718,18 +718,18 @@ EOF
                     3)
                         # Prints Useful Commands
                         # Define color codes
-                        RED="\e[32m"
+                        GREEN="\e[32m"
                         NC="\e[0m" # No Color
 
                         commands_text=$(cat <<EOF
 
-${RED}wg${NC} (Command for Wireguard to print connections and public key of server)
-${RED}systemctl start wg-quick@wg0${NC} (Starts the Wireguard service)
-${RED}systemctl stop wg-quick@wg0${NC} (Stops the Wireguard service)
-${RED}systemctl restart wg-quick@wg0${NC} (Restarts the Wireguard service)
-${RED}nano /etc/wireguard/wg0.conf${NC} (Edits the config file)
-${RED}cat /etc/wireguard/public.key${NC} or ${RED}echo \$public_key${NC} (Prints the Public Key of the server)
-${RED}cat /etc/wireguard/private.key${NC} or ${RED}echo \$private_key${NC} (Prints the Private Key of the server)
+${GREEN}wg${NC} (Command for Wireguard to print connections and public key of server)
+${GREEN}systemctl start wg-quick@wg0${NC} (Starts the Wireguard service)
+${GREEN}systemctl stop wg-quick@wg0${NC} (Stops the Wireguard service)
+${GREEN}systemctl restart wg-quick@wg0${NC} (Restarts the Wireguard service)
+${GREEN}nano /etc/wireguard/wg0.conf${NC} (Edits the config file)
+${GREEN}cat /etc/wireguard/public.key${NC} or ${GREEN}echo \$public_key${NC} (Prints the Public Key of the server)
+${GREEN}cat /etc/wireguard/private.key${NC} or ${GREEN}echo \$private_key${NC} (Prints the Private Key of the server)
 
 EOF
 )
