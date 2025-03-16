@@ -712,6 +712,7 @@ EOF
                     ;;
                     2)
                         # Prints the config file
+                        echo -e "\n"
                         cat /etc/wireguard/wg0.conf
                     ;;
                     3)
