@@ -717,22 +717,25 @@ EOF
                     ;;
                     3)
                         # Prints Useful Commands
+                        # Define color codes
+                        RED="\e[31m"
+                        NC="\e[0m" # No Color
+
                         commands_text=$(cat <<EOF
 
-
-wg (Command for Wireguard to print connections and public key of server)
-systemctl start wg-quick@wg0 (Starts the Wireguard service)
-systemctl stop wg-quick@wg0 (Stops the Wireguard service)
-systemctl restart wg-quick@wg0 (Restarts the Wireguard service)
-nano /etc/wireguard/wg0.conf (Edits the config file)
-cat /etc/wireguard/public.key or echo \$public_key (Prints the Publc Key of the server)
-cat /etc/wireguard/private.key or echo \$private_key (Prints the Private Key of the server)
-
+${RED}wg${NC} (Command for Wireguard to print connections and public key of server)
+${RED}systemctl start wg-quick@wg0${NC} (Starts the Wireguard service)
+${RED}systemctl stop wg-quick@wg0${NC} (Stops the Wireguard service)
+${RED}systemctl restart wg-quick@wg0${NC} (Restarts the Wireguard service)
+${RED}nano /etc/wireguard/wg0.conf${NC} (Edits the config file)
+${RED}cat /etc/wireguard/public.key${NC} or ${RED}echo \$public_key${NC} (Prints the Public Key of the server)
+${RED}cat /etc/wireguard/private.key${NC} or ${RED}echo \$private_key${NC} (Prints the Private Key of the server)
 
 EOF
 )
 
-printf '%s\n' "$commands_text"
+                        # Print the formatted text
+                        echo -e "$commands_text"
                     ;;
                     4)
                         # Exits this loop
