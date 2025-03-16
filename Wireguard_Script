@@ -718,7 +718,7 @@ EOF
                     3)
                         # Prints Useful Commands
                         # Define color codes
-                        RED="\e[31m"
+                        RED="\e[32m"
                         NC="\e[0m" # No Color
 
                         commands_text=$(cat <<EOF
