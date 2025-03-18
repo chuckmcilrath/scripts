@@ -756,8 +756,8 @@ EOF
                     rm -f /etc/wireguard/public.key
                     rm -f /etc/wireguard/private.key
                     rm -r /etc/wireguard/
-                    apt-get remove --purge wireguard wireguard-tools -y
-                    apt autoremove
+                    apt-get remove --purge wireguard wireguard-tools -y \
+                    && apt autoremove -y
                     unset public_key
                     unset private_key
                     echo -e "\nWireguard and it's configuration have been removed."
