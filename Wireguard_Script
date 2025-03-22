@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# 
+#
+# wget -O wireguard.sh  && chmod +x wireguard.sh && ./wireguard.sh
+#
+#
+
 # Global Variables
 resolved_path=/etc/systemd/resolved.conf
 net_int=/etc/network/interfaces
