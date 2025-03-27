@@ -6,11 +6,26 @@
 #
 #
 
-# Global Variables
+#
+# GLOBAL VARIABLES
+#
+
 resolved_path=/etc/systemd/resolved.conf
 net_int=/etc/network/interfaces
 
-# Function to check if the entered IP is valid for the systemd-resolved configuration.
+#
+# GLOBAL FUNCTIONS
+#
+
+# Function to check if this script is ran as root
+check_root() {
+    if [[ $EUID -ne 0 ]]; then
+        echo "This script must be run as root. Please use sudo or log in as root." >&2
+        exit 1
+    fi
+}
+
+# Function to check if the entered IP is valid for the systemd-resolved configuration
 is_valid_ip() {
     local ip=$1
     local IFS='.'
@@ -28,14 +43,14 @@ is_valid_ip() {
     return 0  # IP is valid
 }
 
-#Function to check the user's CIDR input to make sure it's within 0-32.
+#Function to check the user's CIDR input to make sure it's within 0-32
 cidr_check() {
     local cidr=$1
     [[ $cidr =~ ^[0-9]+$ ]] || return 1
     ((cidr >= 0 && cidr <= 32))
 }
 
-# Function to check installs of important apps.
+# Function to check installs of important apps
 check_install() {
     local install_name="$1"
 	echo "looking for $install_name..."
@@ -60,7 +75,7 @@ key_check() {
     return 1
 }
 
-# Function to check if a port number is between 1-65355.
+# Function to check if a port number is between 1-65355
 port_num_check() {
     local num="$1"
 
@@ -71,7 +86,12 @@ port_num_check() {
 }
 
 
-# Start of the Script with options.
+# Start of the Script with options
+
+# Checks for root
+check_root
+
+# Start of user shown options
 while true; do
     # Input from user
     read -p $'\nChoose the install type:\n\n1. (OPTIONAL) Set Static IP\n2. Wireguard Server Install and Setup\n3. Wireguard Server Peer Config\n4. Client Peer Install and Setup\n5. Client Peer Config\n6. Troubleshooting and help\n7. Delete and cleanup\nType "exit" to exit the script\n: ' install_type
