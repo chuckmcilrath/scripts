@@ -290,7 +290,7 @@ EOF
                     break
                 fi
 
-                if grep -q '^EndPoint' /etc/wireguard/wg0.conf; then
+                if grep -q '^Endpoint' /etc/wireguard/wg0.conf; then
                     echo -e "\n **WARNING** This config file is set up to be a Peer. Please run the \"Client Peer Config\" option instead."
                     break
                 fi
@@ -541,7 +541,7 @@ Address = $peer_address/32
 # Wireguard VM server on local Proxmox
 PublicKey = $peer_pk
 AllowedIPs = $allowed_ips_peer/$allowed_ip_cidr
-EndPoint = $endpoint_address:$port_num
+Endpoint = $endpoint_address:$port_num
 EOF
 	        fi
 
@@ -569,7 +569,7 @@ EOF
                     break
                 fi
 
-                read -p $'\nChoose which option you would like to edit\n\n1. Edit the peer address\n2. Edit the remote Wireguard Public Key\n3. Edit Allowed Networks\n4. Edit the IP and port of the EndPoint. (Remote WG WAN and port)\n5. Exit to the previous menu\n: ' client_input
+                read -p $'\nChoose which option you would like to edit\n\n1. Edit the peer address\n2. Edit the remote Wireguard Public Key\n3. Edit Allowed Networks\n4. Edit the IP and port of the Endpoint. (Remote WG WAN and port)\n5. Exit to the previous menu\n: ' client_input
                 case "$client_input" in
                     1)
                         # Edit the IP Address
@@ -672,7 +672,7 @@ EOF
                         # Edit the Endpoint of the remote Wireguard server this Peer is connecting to
                         while true; do
                             echo -e "\nHere is the Endpont IP and port of the remote Wireguard Server this peer connects to:"
-                            grep '^EndPoint' /etc/wireguard/wg0.conf
+                            grep '^Endpoint' /etc/wireguard/wg0.conf
 							read -p $'\n1. Change the Remote Endpoint IP (This is the IP used to communicate to the remote Wireguard Server)\n2. Change the port\n3. Exit to the previous menu\n: ' wan_peer_input
                             case "$wan_peer_input" in
 							    1)
@@ -680,7 +680,7 @@ EOF
                                     while true; do
                                         read -p $'Enter the Remote Server IP for this peer to connect to\n: ' wan_peer_change
                                         if is_valid_ip "$wan_peer_change"; then
-                                            sed -i -E "s/(EndPoint = )[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(:[0-9]+)/\1$wan_peer_change\2/" /etc/wireguard/wg0.conf
+                                            sed -i -E "s/(Endpoint = )[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+(:[0-9]+)/\1$wan_peer_change\2/" /etc/wireguard/wg0.conf
 								            echo "The IP has been changed. Restarting Wireguard..." \
                                             && systemctl restart wg-quick@wg0.service
 								            break
@@ -694,7 +694,7 @@ EOF
                                     while true; do
                                         read -p $'Enter the new port number of the remote Wireguard Server\n: ' port_peer_change
                                         if port_num_check "$port_peer_change"; then
-                                            sed -i -E "s/(EndPoint = [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:)[0-9]+/\1$port_peer_change/" /etc/wireguard/wg0.conf
+                                            sed -i -E "s/(Endpoint = [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+:)[0-9]+/\1$port_peer_change/" /etc/wireguard/wg0.conf
                                             echo "The port has been changed. Restarting Wireguard..." \
                                             && systemctl restart wg-quick@wg0.service
 								            break
