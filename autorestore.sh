@@ -39,6 +39,15 @@ qmrestore \
 
 echo "===> Restore started successfully!"
 echo "Monitor via: qm status $VMID_RESTORE_TO"
+
+qm set 111 --delete ide0
+qm set 111 --delete ide1
+qm set 111 --delete ide2
+qm set 111 -net0 model=virtio,bridge=vmbr0
+
+echo "Starting VM..."
+qm start 111
+
 echo "Removing PBS Storage..."
 pvesm remove Genteks-PBS
 echo "Storage Removed."
