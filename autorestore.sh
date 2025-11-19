@@ -39,3 +39,7 @@ qmrestore \
 
 echo "===> Restore started successfully!"
 echo "Monitor via: qm status $VMID_RESTORE_TO"
+echo "Removing PBS Storage..."
+pvesm remove Genteks-PBS
+echo "Storage Removed."
+echo "Script Complete."
