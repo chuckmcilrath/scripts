@@ -1,3 +1,5 @@
+# wget -O autorestore.sh https://raw.githubusercontent.com/chuckmcilrath/scripts/refs/heads/main/autorestore.sh && chmod +x autorestore.sh && ./autorestore.sh
+
 #!/bin/bash
 set -e
 
