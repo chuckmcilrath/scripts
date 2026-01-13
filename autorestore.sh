@@ -10,7 +10,7 @@ PBS_DATASTORE="Backups"
 PBS_PASSWORD="1*Backup*1"     # You can also use a password file
 PBS_NAME="Genteks-PBS"        # Name that will show up in Promox on the sidebar
 VMID_RESTORE_TO="111"         # The new VMID (or same as original)
-BACKUP_SNAPSHOT="backup/vm/111/2025-11-18T05:07:13Z"   # Snapshot to restore
+BACKUP_SNAPSHOT="backup/vm/111/2026-01-13T05:04:27Z" # Snapshot to restore
 RESTORE_STORAGE="local"       # Target storage on Proxmox host
 RESTORE_FORMAT="qcow2"        # raw or qcow2
 
