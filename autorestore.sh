@@ -4,7 +4,7 @@
 set -e
 
 ### === CONFIGURATION === ###
-PBS_HOST="10.100.100.213"
+PBS_HOST="10.100.100.215"
 PBS_USER="pbsuser@pbs"
 PBS_DATASTORE="Backups"
 PBS_PASSWORD="1*Backup*1"     # You can also use a password file
@@ -23,7 +23,7 @@ pvesm add pbs $PBS_NAME \
 	--datastore $PBS_DATASTORE \
 	--username $PBS_USER \
 	--password "$PBS_PASSWORD" \
-	--fingerprint "b5:c8:bd:f2:f4:4d:4f:2c:37:4f:7b:84:f4:21:b3:4b:60:ab:e0:76:29:7a:1a:a1:92:69:d0:ba:f5:12:2b:be"
+	--fingerprint "e8:c8:ba:36:2e:51:3e:c7:d3:cd:88:a9:c2:f8:f9:e1:9c:6b:6c:57:9e:09:03:36:d7:5f:cb:c1:a2:70:dd:50"
 
 
 echo "===> Starting VM restore from PBS..."
