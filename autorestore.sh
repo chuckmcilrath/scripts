@@ -4,7 +4,7 @@
 set -e
 
 ### === CONFIGURATION === ###
-PBS_HOST="10.100.100.215"
+PBS_HOST="10.11.0.16" #"10.100.100.215"
 PBS_USER="pbsuser@pbs"
 PBS_DATASTORE="Backups"
 PBS_PASSWORD="1*Backup*1"     # You can also use a password file
