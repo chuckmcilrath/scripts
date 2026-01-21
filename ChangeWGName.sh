@@ -15,20 +15,28 @@ dcm_public="etc/wireguard/dcm_public.key"
 
 wan_peer_change="dcm.genteks.net"
 
-if grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config1"; then
+if grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config1" && [ -f "$wg_config1" ]; then
 	cp "$wg_config1" "$wg_config1".bak
 	sed -i -E "s/(Endpoint = )([^:]+)(:[0-9]+)/\1$wan_peer_change\3/" "$wg_config1"
 	mv "$wg_config1" "$dcm_conf"
 	mv "$wg1_private" "$dcm_private"
 	mv "$wg1_public" "$dcm_public"
 	sed -i 's/wg0/dcm/' ~/.bashrc
-elif grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config2"; then
+	systemctl stop wg-quick@wg0
+	systemctl disable wg-quick@wg0
+	systemctl enable wg-quick@dcm
+	systemctl start wg-quick@dcm
+elif grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config2"&& [ -f "$wg_config2" ]; then
 	cp "$wg_config2" "$wg_config2".bak
 	sed -i -E "s/(Endpoint = )([^:]+)(:[0-9]+)/\1$wan_peer_change\3/" "$wg_config2"
 	mv "$wg_config2" "$dcm_conf"
 	mv "$wg2_private" "$dcm_private"
 	mv "$wg2_public" "$dcm_public"
 	sed -i 's/wg1/dcm/' ~/.bashrc
+	systemctl stop wg-quick@wg0
+	systemctl disable wg-quick@wg0
+	systemctl enable wg-quick@dcm
+	systemctl start wg-quick@dcm
 else
 	echo "error"
 fi
