@@ -15,7 +15,7 @@ dcm_public="/etc/wireguard/dcm_public.key"
 
 wan_peer_change="dcm.genteks.net"
 
-if grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config1" && [ -f "$wg_config1" ]; then
+if [ -f "$wg_config1" ] && grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config1"; then
 	systemctl stop wg-quick@wg0
 	systemctl disable wg-quick@wg0
 	cp "$wg_config1" "$wg_config1".bak
@@ -29,7 +29,7 @@ if grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config1" && [ -f "$wg_config1" ];
 	sed -i '/export/d' ~/.bashrc
 	echo "alias dcm_public_key=\"cat /etc/wireguard/dcm_public.key\"" >> ~/.bashrc
 	echo "alias dcm_private_key=\"cat /etc/wireguard/dcm_private.key\"" >> ~/.bashrc
-elif grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config2" && [ -f "$wg_config2" ]; then
+elif [ -f "$wg_config2" ] && grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config2"; then
 	systemctl stop wg-quick@wg1
 	systemctl disable wg-quick@wg1
 	cp "$wg_config2" "$wg_config2".bak
