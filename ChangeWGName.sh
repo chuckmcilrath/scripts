@@ -52,4 +52,4 @@ fi
 rm wgrename.sh
 
 # Changed these to use dc.genteks.net
-# apex, hillpointe, sandhill
+# apex, hillpointe, sandhill, fine-remote-pbs
