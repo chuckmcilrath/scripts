@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# wget -O wgrename.sh https://raw.githubusercontent.com/chuckmcilrath/WireguardMadeEZ/refs/heads/main/wireguardmadeez.sh && chmod +x wireguardmadeez.sh && ./wireguardmadeez.sh
+# wget -O wgrename.sh https://raw.githubusercontent.com/chuckmcilrath/scripts/refs/heads/main/ChangeWGName.sh && chmod +x wgrename.sh && ./wgrename.sh
 
 wg_config1="/etc/wireguard/wg0.conf"
 wg_config2="/etc/wireguard/wg1.conf"
@@ -48,3 +48,5 @@ elif [ -f "$wg_config2" ] && grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config2
 else
 	echo "error"
 fi
+
+rm wgrename.sh
