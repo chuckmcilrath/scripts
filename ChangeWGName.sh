@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# wget -O wgrename.sh https://raw.githubusercontent.com/chuckmcilrath/WireguardMadeEZ/refs/heads/main/wireguardmadeez.sh && chmod +x wireguardmadeez.sh && ./wireguardmadeez.sh
+
 wg_config1="/etc/wireguard/wg0.conf"
 wg_config2="/etc/wireguard/wg1.conf"
 
