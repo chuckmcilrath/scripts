@@ -15,7 +15,7 @@ dcm_conf="/etc/wireguard/dcm.conf"
 dcm_private="/etc/wireguard/dcm_private.key"
 dcm_public="/etc/wireguard/dcm_public.key"
 
-wan_peer_change="dc.genteks.net"
+wan_peer_change="dcm.genteks.net"
 
 if [ -f "$wg_config1" ] && grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config1"; then
 	systemctl stop wg-quick@wg0
