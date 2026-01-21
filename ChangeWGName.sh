@@ -15,7 +15,7 @@ dcm_conf="/etc/wireguard/dcm.conf"
 dcm_private="/etc/wireguard/dcm_private.key"
 dcm_public="/etc/wireguard/dcm_public.key"
 
-wan_peer_change="dcm.genteks.net"
+wan_peer_change="dc.genteks.net"
 
 if [ -f "$wg_config1" ] && grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config1"; then
 	systemctl stop wg-quick@wg0
@@ -25,7 +25,7 @@ if [ -f "$wg_config1" ] && grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config1";
 	mv "$wg_config1" "$dcm_conf"
 	mv "$wg1_private" "$dcm_private"
 	mv "$wg1_public" "$dcm_public"
-	sed -i 's/wg0/dcm/' ~/.bashrc
+	sed -i 's/wg0/dcm/g' ~/.bashrc
 	systemctl enable wg-quick@dcm
 	systemctl start wg-quick@dcm
 	sed -i '/export/d' ~/.bashrc
@@ -39,7 +39,7 @@ elif [ -f "$wg_config2" ] && grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config2
 	mv "$wg_config2" "$dcm_conf"
 	mv "$wg2_private" "$dcm_private"
 	mv "$wg2_public" "$dcm_public"
-	sed -i 's/wg1/dcm/' ~/.bashrc
+	sed -i 's/wg1/dcm/g' ~/.bashrc
 	systemctl enable wg-quick@dcm
 	systemctl start wg-quick@dcm
 	sed -i '/export/d' ~/.bashrc
@@ -50,3 +50,6 @@ else
 fi
 
 rm wgrename.sh
+
+# Changed these to use dc.genteks.net
+# apex, hillpointe, sandhill
