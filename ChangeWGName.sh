@@ -4,12 +4,15 @@
 
 wg_config1="/etc/wireguard/wg0.conf"
 wg_config2="/etc/wireguard/wg1.conf"
+wg_config3="/etc/wireguard/mgmt.conf"
 
 wg1_private="/etc/wireguard/wg0_private.key"
 wg2_private="/etc/wireguard/wg1_private.key"
+wg3_private="/etc/wireguard/mgmt_private.key"
 
 wg1_public="/etc/wireguard/wg0_public.key"
 wg2_public="/etc/wireguard/wg1_public.key"
+wg3_public="/etc/wireguard/mgmt_public.key"
 
 dcm_conf="/etc/wireguard/dcm.conf"
 dcm_private="/etc/wireguard/dcm_private.key"
@@ -40,6 +43,20 @@ elif [ -f "$wg_config2" ] && grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config2
 	mv "$wg2_private" "$dcm_private"
 	mv "$wg2_public" "$dcm_public"
 	sed -i 's/wg1/dcm/g' ~/.bashrc
+	systemctl enable wg-quick@dcm
+	systemctl start wg-quick@dcm
+	sed -i '/export/d' ~/.bashrc
+	echo "alias dcm_public_key=\"cat /etc/wireguard/dcm_public.key\"" >> ~/.bashrc
+	echo "alias dcm_private_key=\"cat /etc/wireguard/dcm_private.key\"" >> ~/.bashrc
+elif [ -f "$wg_config3" ] && grep -q "AllowedIPs = 10.100.100.0/24" "$wg_config3"; then
+	systemctl stop wg-quick@mgmt
+	systemctl disable wg-quick@mgmt
+	cp "$wg_config3" "$wg_config3".bak
+	sed -i -E "s/(Endpoint = )([^:]+)(:[0-9]+)/\1$wan_peer_change\3/" "$wg_config3"
+	mv "$wg_config3" "$dcm_conf"
+	mv "$wg3_private" "$dcm_private"
+	mv "$wg3_public" "$dcm_public"
+	sed -i 's/mgmt/dcm/g' ~/.bashrc
 	systemctl enable wg-quick@dcm
 	systemctl start wg-quick@dcm
 	sed -i '/export/d' ~/.bashrc
