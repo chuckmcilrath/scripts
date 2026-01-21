@@ -67,3 +67,7 @@ else
 fi
 
 rm wgrename.sh
+
+# needs help
+# Prileo Remote
+# Smart remote
