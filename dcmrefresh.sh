@@ -3,7 +3,7 @@
 # Checks if the 'dcm' interface connection is stale for more than 5 minutes 
 # and refreshes it if necessary 
 
-# wget -O dcmrefresh.sh https://raw.githubusercontent.com/chuckmcilrath/scripts/refs/heads/main/Wireguard_Script && chmod +x dcmrefresh.sh && (crontab -l; echo "*/15 * * * * /root/dcmrefresh.sh >/dev/null 2>&1") | crontab -
+# wget -O dcmrefresh.sh https://raw.githubusercontent.com/chuckmcilrath/scripts/refs/heads/main/dcmrefresh.sh && chmod +x dcmrefresh.sh && (crontab -l; echo "*/15 * * * * /root/dcmrefresh.sh >/dev/null 2>&1") | crontab -
 
 
 INTERFACE="dcm" 
