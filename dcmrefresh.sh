@@ -4,7 +4,7 @@
 # and refreshes it if necessary 
 
 # (crontab -l 2>/dev/null | grep -v dcmrefresh; echo "*/15 * * * * /root/dcmrefresh.sh >/dev/null 2>&1") | crontab -
-
+PATH=/usr/local/sbin:/usr/sbin:/sbin:/usr/local/bin:/usr/bin:/bin
 
 INTERFACE="dcm" 
 STALE_THRESHOLD=300  # 5 minutes in seconds 
