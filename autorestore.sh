@@ -26,29 +26,29 @@ pvesm add pbs $PBS_NAME \
 	--fingerprint "e8:c8:ba:36:2e:51:3e:c7:d3:cd:88:a9:c2:f8:f9:e1:9c:6b:6c:57:9e:09:03:36:d7:5f:cb:c1:a2:70:dd:50"
 
 
-echo "===> Starting VM restore from PBS..."
-echo "Restore source: $BACKUP_SNAPSHOT"
-echo "Target VMID: $VMID_RESTORE_TO"
-echo "Target Storage: $RESTORE_STORAGE"
+#echo "===> Starting VM restore from PBS..."
+#echo "Restore source: $BACKUP_SNAPSHOT"
+#echo "Target VMID: $VMID_RESTORE_TO"
+#echo "Target Storage: $RESTORE_STORAGE"
 
-qmrestore \
-	$PBS_NAME:$BACKUP_SNAPSHOT \
-	$VMID_RESTORE_TO \
-	--storage $RESTORE_STORAGE \
-	--unique 1
+#qmrestore \
+	#$PBS_NAME:$BACKUP_SNAPSHOT \
+	#$VMID_RESTORE_TO \
+	#--storage $RESTORE_STORAGE \
+	#--unique 1
 
-echo "===> Restore started successfully!"
-echo "Monitor via: qm status $VMID_RESTORE_TO"
+#echo "===> Restore started successfully!"
+#echo "Monitor via: qm status $VMID_RESTORE_TO"
 
-qm set 111 --delete ide0
-qm set 111 --delete ide1
-qm set 111 --delete ide2
-qm set 111 -net0 model=virtio,bridge=vmbr0
+#qm set 111 --delete ide0
+#qm set 111 --delete ide1
+#qm set 111 --delete ide2
+#qm set 111 -net0 model=virtio,bridge=vmbr0
 
-echo "Starting VM..."
-qm start 111
+#echo "Starting VM..."
+#qm start 111
 
-echo "Removing PBS Storage..."
-pvesm remove Genteks-PBS
-echo "Storage Removed."
-echo "Script Complete."
+#echo "Removing PBS Storage..."
+#pvesm remove Genteks-PBS
+#echo "Storage Removed."
+#echo "Script Complete."
