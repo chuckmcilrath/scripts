@@ -39,16 +39,15 @@ check_fail2ban_client_install() {
 
 # User Input
 user_input() {
-    read -rp "Enter an email for fail2ban to use as a \"sender\". (e.g. fail2ban@name-of-company.com)" sender_email
-    read -rp "Enter the amount of time to ban offenders? (e.g. 5m, 12h, 50d, 10y etc)." bantime_input
-    read -rp "Enter the maximum amount of retries before banning." maxretry_input
+    echo "Enter an email for fail2ban to use as a \"sender\". (e.g. fail2ban@name-of-company.com)"
+	read -rp ": " sender_email
 }
 
 defaults() {
 		cat <<EOF > "$defaults_jail_path"
 [DEFAULT]
-bantime = $bantime_input
-maxretry = $maxretry_input
+bantime = 24h
+maxretry = 5
 findtime = 10m
 backend = systemd
 destemail = root@localhost
@@ -123,3 +122,6 @@ fail2ban_local_add_for_IPV6
 finish
 
 ## END OF SCRIPT
+## OLD INPUTS UNDER USER INPUTS
+## read -rp "Enter the amount of time to ban offenders? (e.g. 5m, 12h, 50d, 10y etc)." bantime_input
+## read -rp "Enter the maximum amount of retries before banning." maxretry_input
