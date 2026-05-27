@@ -6,9 +6,9 @@
 #
 
 #VARIABLES
-defaults_jail_path=(/etc/fail2ban/jail.d/defaults.local)
-ssh_jail_path=(/etc/fail2ban/jail.d/sshd.local)
-proxmox_jail_path=(/etc/fail2ban/jail.d/proxmox.local)
+defaults_jail_path=/etc/fail2ban/jail.d/defaults.local
+ssh_jail_path=/etc/fail2ban/jail.d/sshd.local
+proxmox_jail_path=/etc/fail2ban/jail.d/proxmox.local
 proxmox_filter_path=/etc/fail2ban/filter.d/proxmox.conf
 f2b_local_path=/etc/fail2ban/fail2ban.local
 
