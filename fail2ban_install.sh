@@ -48,7 +48,7 @@ defaults() {
 		cat <<EOF > "$defaults_jail_path"
 [DEFAULT]
 bantime = "$bantime_input"
-bantime = "$maxretry_input"
+maxretry = "$maxretry_input"
 findtime = 10m
 backend = systemd
 destemail = root@localhost
