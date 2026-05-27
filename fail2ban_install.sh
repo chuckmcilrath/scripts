@@ -47,12 +47,12 @@ user_input() {
 defaults() {
 		cat <<EOF > "$defaults_jail_path"
 [DEFAULT]
-bantime = "$bantime_input"
-maxretry = "$maxretry_input"
+bantime = $bantime_input
+maxretry = $maxretry_input
 findtime = 10m
 backend = systemd
 destemail = root@localhost
-sender = "$sender_email"
+sender = $sender_email
 mta = sendmail
 action = %(action_mwl)s
 ignoreip = 127.0.0.1/8 ::1
