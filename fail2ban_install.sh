@@ -54,7 +54,7 @@ backend = systemd
 destemail = root@localhost
 sender = $sender_email
 mta = sendmail
-action = %(action_mwl)s
+action = %(action_mw)s
 ignoreip = 127.0.0.1/8 ::1
 EOF
 }
