@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# wget -O fail2ban_install.sh https://raw.githubusercontent.com/chuckmcilrath/scripts/refs/heads/main/fail2ban_install%202.0 && chmod +x fail2ban_install.sh && ./fail2ban_install.sh
+# wget -O fail2ban_install.sh https://raw.githubusercontent.com/chuckmcilrath/scripts/refs/heads/main/fail2ban_install.sh && chmod +x fail2ban_install.sh && ./fail2ban_install.sh
 #
 #
 
